@@ -1,19 +1,21 @@
 from sly import Lexer
 
+
 class HissuiLexer(Lexer):
-    tokens = {ID, NUMBER,EQUAL,ASSIGN, FOR, IF,ELSE,ELSEIF, IN,SQUARE
-        , CIRCLE, RECTANGLE, TRIANGLE, VECTOR,MATRIX,NEW,RP,LP,RB,LB,COMMA,COLON,RETURN}
+    tokens = {ID, NUMBER, EQUAL, ASSIGN, FOR, IF, ELSE, ELSEIF, IN, SQUARE
+        , CIRCLE, RECTANGLE, TRIANGLE, VECTOR, MATRIX, NEW, RP, LP, RB, LB, COMMA, COLON, RETURN}
 
     ID = r'[a-zA-Z_][a-zA-Z0-9_]*'
 
     ignore = ' \t'
 
     NUMBER = r'\d+'
-    def NUMBER(self,t):
+
+    def NUMBER(self, t):
         t.value = int(t.value)
         return t
 
-    literals = {'+','-','/','*','^'}
+    literals = {'+', '-', '/', '*', '^'}
 
     EQUAL = r'=='
     ASSIGN = r'='
@@ -26,8 +28,7 @@ class HissuiLexer(Lexer):
     LB = r'\['
     RB = r'\]'
 
-
-    ID['if']=IF
+    ID['if'] = IF
     ID["else"] = ELSE
     ID['elif'] = ELSEIF
     ID['for'] = FOR
@@ -44,10 +45,14 @@ class HissuiLexer(Lexer):
 
     ID['new'] = NEW
 
+    def error(self,t):
+        print("Illegal character '%s'"%t.value[0])
+        self.index += 1
+
 if __name__ == '__main__':
-    data = "circle c = new circle(2)" \
+    data = "circle c = new circle(21)" \
            "circle j = new circle(4)" \
-           "if(c == j) return true"
+           "if(c == j) return true @"
     lexer = HissuiLexer()
     for tok in lexer.tokenize(data):
         print(tok)
