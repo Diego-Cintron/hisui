@@ -116,6 +116,11 @@ class HissuiParser(Parser):
     def expr(self, p):
         return p.expr0 / p.expr1
 
+    # Does exponent
+    @_('expr "^" expr')
+    def expr(self, p):
+        return p.expr0 ** p.expr1
+
     # Parses individual negative numbers
     @_('"-" expr %prec UMINUS')
     def expr(self, p):
