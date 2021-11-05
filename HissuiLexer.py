@@ -68,7 +68,7 @@ class HissuiParser(Parser):
     # Tells code to use proper order of operation while doing math operations
     precedence = (
         ('left', '+', '-'),
-        ('left', '*', '/'),
+        ('left', '*', '/','^'),
         ('right', 'UMINUS'),
     )
 
