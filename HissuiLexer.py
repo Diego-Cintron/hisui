@@ -68,7 +68,7 @@ class HissuiParser(Parser):
     # Tells code to use proper order of operation while doing math operations
     precedence = (
         ('left', '+', '-'),
-        ('left', '*', '/','^'),
+        ('left', '*', '/','^',EQUAL),
         ('right', 'UMINUS'),
     )
 
@@ -146,12 +146,19 @@ class HissuiParser(Parser):
             return 0
 
     @_('expr EQUAL expr')
+    def expr(self, p):
+        return p.expr0==p.expr1
+
+    @_('expr EQUAL expr')
     def condition(self, p):
-        return 'condition_equal', p.expr0, p.expr1
+        return p.expr0 == p.expr1
 
     @_('IF condition THEN statement ELSE statement')
     def statement(self, p):
-        return 'if_stmt', p.condition, ('branch', p.statement0, p.statement1)
+        if p.condition:
+            return p.statement0
+        else:
+            return p.condition1
 
     # @_('FOR ID TO expr THEN statement')
     # def statement(self, ):
