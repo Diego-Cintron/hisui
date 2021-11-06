@@ -40,6 +40,7 @@ class HissuiLexer(Lexer):
     ID['if'] = IF
     ID['then'] = THEN
     ID["else"] = ELSE
+
     # ID['elif'] = ELSEIF
     # ID['for'] = FOR
     # ID['in'] = IN
@@ -68,7 +69,7 @@ class HissuiParser(Parser):
     # Tells code to use proper order of operation while doing math operations
     precedence = (
         ('left', '+', '-'),
-        ('left', '*', '/','^',EQUAL),
+        ('left', '*', '/', '^', EQUAL),
         ('right', 'UMINUS'),
     )
 
@@ -85,11 +86,13 @@ class HissuiParser(Parser):
     @_('ID "=" expr')
     def statement(self, p):
         self.ids[p.ID] = p.expr
+        return p.ID,p.expr
 
     # Assigns string value to a variable
     @_('ID "=" STRING')
     def statement(self, p):
         self.ids[p.ID] = p.STRING
+        return p.ID,p.STRING
 
     # Prints out expression once it no longer has any operations left
     @_('expr')
@@ -147,7 +150,7 @@ class HissuiParser(Parser):
 
     @_('expr EQUAL expr')
     def expr(self, p):
-        return p.expr0==p.expr1
+        return p.expr0 == p.expr1
 
     @_('expr EQUAL expr')
     def condition(self, p):
@@ -156,9 +159,11 @@ class HissuiParser(Parser):
     @_('IF condition THEN statement ELSE statement')
     def statement(self, p):
         if p.condition:
-            return p.statement0
+            self.ids[p.statement0[0]] = p.statement0[1]
+            return p.statement0[1]
         else:
-            return p.condition1
+            self.ids[p.statement1[0]] = p.statement1[1]
+            return p.statement1[1]
 
     # @_('FOR ID TO expr THEN statement')
     # def statement(self, ):
