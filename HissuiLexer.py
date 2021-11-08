@@ -9,7 +9,7 @@ class HissuiLexer(Lexer):
     #   SQUARE, CIRCLE, RECTANGLE, TRIANGLE, VECTOR, MATRIX, NEW, FOR,
     #   ELSEIF, IN, COMMA, COLON, RETURN,
     # Tokens that were transferred to "literals": ASSIGN, RP, LP, RB, LB
-    tokens = {ID, NUMBER, STRING, EQUAL, IF, THEN, ELSE}
+    tokens = {ID, NUMBER, STRING, EQUAL, IF, THEN, ELSE, FOR, TO, LESS_THAN, GREATER_THAN, LESS_OR, GREATER_OR}
 
     # Lexer can read letters and combinations of letters and numbers
     ID = r'[a-zA-Z_][a-zA-Z0-9_]*'
@@ -29,10 +29,12 @@ class HissuiLexer(Lexer):
     STRING = r'\".*?\"'
 
     # stating the operators
-    literals = {'+', '-', '/', '*', '^', '=', '(', ')'}
+    literals = {'+', '-', '/', '*', '^', '=', '(', ')', '<', '>'}
 
     # establishing function characters
     EQUAL = r'=='
+    LESS_THAN = r'<'
+    GREATER_THAN = r'>'
     # COMMA = r','
     # COLON = r':'
 
@@ -40,6 +42,10 @@ class HissuiLexer(Lexer):
     ID['if'] = IF
     ID['then'] = THEN
     ID["else"] = ELSE
+    ID["for"] = FOR
+    ID["to"] = TO
+    ID["le"] = LESS_OR
+    ID["ge"] = GREATER_OR
 
     # ID['elif'] = ELSEIF
     # ID['for'] = FOR
@@ -156,6 +162,38 @@ class HissuiParser(Parser):
     def condition(self, p):
         return p.expr0 == p.expr1
 
+    @_('expr LESS_THAN expr')
+    def expr(self, p):
+        return p.expr0 < p.expr1
+
+    @_('expr LESS_THAN expr')
+    def condition(self, p):
+        return p.expr0 < p.expr1
+
+    @_('expr GREATER_THAN expr')
+    def expr(self, p):
+        return p.expr0 > p.expr1
+
+    @_('expr GREATER_THAN expr')
+    def condition(self, p):
+        return p.expr0 > p.expr1
+
+    @_('expr LESS_OR expr')
+    def expr(self, p):
+        return p.expr0 <= p.expr1
+
+    @_('expr LESS_OR expr')
+    def condition(self, p):
+        return p.expr0 <= p.expr1
+
+    @_('expr GREATER_OR expr')
+    def expr(self, p):
+        return p.expr0 >= p.expr1
+
+    @_('expr GREATER_OR expr')
+    def condition(self, p):
+        return p.expr0 >= p.expr1
+
     @_('IF condition THEN statement ELSE statement')
     def statement(self, p):
         if p.condition:
@@ -165,9 +203,10 @@ class HissuiParser(Parser):
             self.ids[p.statement1[0]] = p.statement1[1]
             return p.statement1[1]
 
-    # @_('FOR ID TO expr THEN statement')
-    # def statement(self, ):
-    #     return 'for_loop', ('for_loop_setup', p.ID, p.expr), p.statement
+    #@_('FOR var_assign TO expr THEN statement')
+    #def statement(self, p):
+    #    return ('for_loop', ('for_loop_setup', p.var_assign, p.expr), p.statement)
+
 
 
 if __name__ == '__main__':
