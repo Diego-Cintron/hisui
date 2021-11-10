@@ -259,13 +259,26 @@ class HissuiParser(Parser):
             self.ids[p.statement1[0]] = p.statement1[1]
             return p.statement1[1]
 
+    @_('IF condition THEN expr ELSE expr')
+    def statement(self, p):
+        if p.condition:
+            print(p.expr0)
+            return p.expr0
+        else:
+            print(p.expr1)
+
+            return p.expr1
+
     # Lists===========================================================================================
 
     @_('ID "=" LIST "[" "]"')
     def statement(self, p):
         try:
             inp = input("Enter List Elements: ")
-            lst = list(map(int, inp.split(",")))
+            if inp != "":
+                lst = list(map(int, inp.split(",")))
+            else:
+                lst = []
             self.ids[p.ID] = lst
             return p.ID, lst
         except TypeError:
