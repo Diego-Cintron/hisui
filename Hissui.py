@@ -21,7 +21,7 @@ class HissuiLexer(Lexer):
               # Extra Structure Tokens
               MATRIX, VECTOR,
               # List Tokens
-              LIST, SIZE, REMOVE, ADD, SORT}
+              LIST, SIZE, REMOVE, ADD, SORT,COMMA,}
 
     # Lexer can read letters and combinations of letters and numbers
     ID = r'[a-zA-Z_][a-zA-Z0-9_]*'
@@ -47,6 +47,7 @@ class HissuiLexer(Lexer):
     GREATEREQ = r'>='
     LESSEQ = r'<='
     EQUAL = r'=='
+    COMMA = r','
     # COLON = r':'
 
     # implementing standard language clauses.
@@ -54,8 +55,8 @@ class HissuiLexer(Lexer):
     ID['then'] = THEN
     ID["else"] = ELSE
     ID['list'] = LIST
-    # ID['for'] = FOR
-    # ID['to'] = TO
+
+
 
     # List methods
     ID['list'] = LIST
@@ -83,7 +84,7 @@ class HissuiLexer(Lexer):
 
 class HissuiParser(Parser):
     tokens = HissuiLexer.tokens
-
+    memory = {}
     # Tells code to use proper order of operation while doing math operations
     precedence = (
         ('left', '+', '-'),
@@ -105,6 +106,8 @@ class HissuiParser(Parser):
     @_('ID "=" expr')
     def statement(self, p):
         self.ids[p.ID] = p.expr
+        if p.ID not in memory:
+            memory[p.ID] = expr
         return p.ID, p.expr
 
     @_('ID "=" RECTANGLE')
@@ -252,35 +255,43 @@ class HissuiParser(Parser):
     @_('IF condition THEN statement ELSE statement')
     def statement(self, p):
         if p.condition:
-            print(p.statement0[0])
-            self.ids[p.statement0[0]] = p.statement0[1]
+            if self.ids[p.statement0[0]] == self.ids[p.statement1[0]]:
+                self.ids[p.statement0[0]] = p.statement0[1]
+
+            else:
+                self.ids[p.statement0[0]] = p.statement0[1]
+                del (self.ids[p.statement1[0]])
             return p.statement0[1]
         else:
-            self.ids[p.statement1[0]] = p.statement1[1]
+            if self.ids[p.statement0[0]] == self.ids[p.statement1[0]]:
+                self.ids[p.statement1[0]] = p.statement1[1]
+
+            else:
+                self.ids[p.statement1[0]] = p.statement1[1]
+                del (self.ids[p.statement0[0]])
+
             return p.statement1[1]
 
     @_('IF condition THEN expr ELSE expr')
     def statement(self, p):
         if p.condition:
-            print(p.expr0)
+            print(p.expr0[0])
             return p.expr0
         else:
-            print(p.expr1)
-
             return p.expr1
 
     # Lists===========================================================================================
 
-    @_('ID "=" LIST "[" "]"')
+    @_('ID "=" LIST "[" [ expr ] { COMMA expr } "]"')
     def statement(self, p):
         try:
-            inp = input("Enter List Elements: ")
-            if inp != "":
-                lst = list(map(int, inp.split(",")))
-            else:
+            if p.expr0 is None:
                 lst = []
+            else:
+                lst = p.expr1
+                lst.insert(0, p.expr0)
             self.ids[p.ID] = lst
-            return p.ID, lst
+
         except TypeError:
             print("Error variable is not a list")
 
@@ -331,6 +342,10 @@ class HissuiParser(Parser):
             return self.ids[p.ID]
         except TypeError:
             print("Error variable is not a list")
+
+    # FOR loops ======================================================================================
+
+
 
 
 if __name__ == '__main__':
