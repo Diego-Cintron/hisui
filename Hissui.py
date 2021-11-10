@@ -9,9 +9,19 @@ class HissuiLexer(Lexer):
     #   SQUARE, CIRCLE, RECTANGLE, TRIANGLE, VECTOR, MATRIX, NEW, FOR,
     #   ELSEIF, IN, COMMA, COLON, RETURN,
     # Tokens that were transferred to "literals": ASSIGN, RP, LP, RB, LB
-    tokens = {ID, NUMBER, STRING, EQUAL, IF, THEN, ELSE, GREATEREQ, LESSEQ, PRINT, SQUARE, RECTANGLE, TRIANGLE, CIRCLE,
-              MATRIX
-        , VECTOR, FOR, TO}
+    tokens = {ID, NUMBER, STRING, EQUAL,
+              # statement tokens
+              IF, THEN, ELSE,
+              # Comparison tokens
+              GREATEREQ, LESSEQ,
+
+              # Shape Tokens
+              SQUARE, RECTANGLE, TRIANGLE, CIRCLE,
+
+              # Extra Structure Tokens
+              MATRIX, VECTOR,
+              # List Tokens
+              LIST, SIZE, REMOVE, ADD, SORT}
 
     # Lexer can read letters and combinations of letters and numbers
     ID = r'[a-zA-Z_][a-zA-Z0-9_]*'
@@ -31,23 +41,28 @@ class HissuiLexer(Lexer):
     STRING = r'\".*?\"'
 
     # stating the operators
-    literals = {'+', '-', '/', '*', '^', '=', '(', ')', '<', '>', '%'}
+    literals = {'+', '-', '/', '*', '^', '=', '(', ')', '<', '>', '%', '[', ']', '.'}
 
     # establishing function characters
     GREATEREQ = r'>='
     LESSEQ = r'<='
     EQUAL = r'=='
-    # COMMA = r','
     # COLON = r':'
 
     # implementing standard language clauses.
     ID['if'] = IF
     ID['then'] = THEN
     ID["else"] = ELSE
-    ID['for'] = FOR
-    ID['to'] = TO
+    ID['list'] = LIST
+    # ID['for'] = FOR
+    # ID['to'] = TO
 
-    ID['print'] = PRINT
+    # List methods
+    ID['list'] = LIST
+    ID['size'] = SIZE
+    ID['remove'] = REMOVE
+    ID['add'] = ADD
+    ID['sort'] = SORT
 
     # Adding different functional objects
     ID['square'] = SQUARE
@@ -85,18 +100,12 @@ class HissuiParser(Parser):
     def statement(self, p):
         pass
 
-
+    # Variable Declaration ====================================================================
     # Assigns expression to a variable
     @_('ID "=" expr')
     def statement(self, p):
         self.ids[p.ID] = p.expr
         return p.ID, p.expr
-
-    # Assigns string value to a variable
-    @_('ID "=" STRING')
-    def statement(self, p):
-        self.ids[p.ID] = p.STRING
-        return p.ID, p.STRING
 
     @_('ID "=" RECTANGLE')
     def statement(self, p):
@@ -133,16 +142,7 @@ class HissuiParser(Parser):
     def statement(self, p):
         print(p.expr)
 
-    @_('PRINT expr')
-    def statement(self, p):
-        print(p.expr)
-        return p.expr
-
-    @_('PRINT STRING')
-    def statement(self, p):
-        print(p.expr)
-        return p.expr
-
+    # Expression Handling =======================================================================================
     # Does addition
     @_('expr "+" expr')
     def expr(self, p):
@@ -196,6 +196,11 @@ class HissuiParser(Parser):
     def expr(self, p):
         return p.NUMBER
 
+    # Parses numbers
+    @_('STRING')
+    def expr(self, p):
+        return p.STRING
+
     # Parses variables
     @_('ID')
     def expr(self, p):
@@ -217,6 +222,7 @@ class HissuiParser(Parser):
     def expr(self, p):
         return p.expr0 == p.expr1
 
+    # Condition Handling ====================================================================
     @_('expr GREATEREQ expr')
     def condition(self, p):
         return p.expr0 >= p.expr1
@@ -237,24 +243,81 @@ class HissuiParser(Parser):
     def condition(self, p):
         return p.expr0 == p.expr1
 
+    @_('NUMBER')
+    def condition(self, p):
+        return p.NUMBER
+
+    # If statements =====================================================================================
+
     @_('IF condition THEN statement ELSE statement')
     def statement(self, p):
         if p.condition:
+            print(p.statement0[0])
             self.ids[p.statement0[0]] = p.statement0[1]
             return p.statement0[1]
         else:
             self.ids[p.statement1[0]] = p.statement1[1]
             return p.statement1[1]
 
-    @_('NUMBER')
-    def condition(self, p):
-        return p.NUMBER
+    # Lists===========================================================================================
 
-    # Base for loop, to test just type for STARTING POINT to STOP CONDITION and some random statement
-    @_('FOR NUMBER TO condition THEN statement')
+    @_('ID "=" LIST "[" "]"')
     def statement(self, p):
-       for i in range(p.NUMBER ,p.condition):
-           print("Test")
+        try:
+            inp = input("Enter List Elements: ")
+            lst = list(map(int, inp.split(",")))
+            self.ids[p.ID] = lst
+            return p.ID, lst
+        except TypeError:
+            print("Error variable is not a list")
+
+    @_('ID "[" NUMBER "]"')
+    def expr(self, p):
+        try:
+            index = self.ids[p.ID][p.NUMBER]
+            return index
+        except TypeError:
+            print("Error variable is not a list")
+
+    @_('ID "." SIZE "("  ")" ')
+    def expr(self, p):
+        try:
+            size = len(self.ids[p.ID])
+            return size
+        except TypeError:
+            print("Error variable is not a list")
+
+    @_('ID "." REMOVE "(" NUMBER ")"')
+    def expr(self, p):
+        try:
+            del self.ids[p.ID][p.NUMBER]
+            return self.ids[p.ID]
+        except TypeError:
+            print("Error variable is not a list")
+
+    @_('ID "." ADD "(" expr ")"')
+    def expr(self, p):
+        try:
+            self.ids[p.ID].append(p.expr)
+            return self.ids[p.ID]
+        except TypeError:
+            print("Error variable is not a list")
+
+    @_('ID "[" NUMBER "]" "=" expr')
+    def expr(self, p):
+        try:
+            self.ids[p.ID][p.NUMBER] = p.expr
+            return self.ids[p.ID]
+        except TypeError:
+            print("Error variable is not a list")
+
+    @_('ID "." SORT "("  ")"')
+    def expr(self, p):
+        try:
+            self.ids[p.ID].sort()
+            return self.ids[p.ID]
+        except TypeError:
+            print("Error variable is not a list")
 
 
 if __name__ == '__main__':
