@@ -11,7 +11,8 @@ class HissuiLexer(Lexer):
     # Tokens that were transferred to "literals": ASSIGN, RP, LP, RB, LB
     tokens = {ID, NUMBER, STRING, EQUAL,
               # statement tokens
-              IF, THEN, ELSE,
+              IF, THEN, ELSE, FOR, TO,
+
               # Comparison tokens
               GREATEREQ, LESSEQ,
 
@@ -54,8 +55,8 @@ class HissuiLexer(Lexer):
     ID['then'] = THEN
     ID["else"] = ELSE
     ID['list'] = LIST
-    # ID['for'] = FOR
-    # ID['to'] = TO
+    ID['for'] = FOR
+    ID['to'] = TO
 
     # List methods
     ID['list'] = LIST
@@ -91,100 +92,112 @@ class HissuiParser(Parser):
         ('right', 'UMINUS'),
     )
 
-    # Creates collection of variables
-    def __init__(self):
-        self.ids = {}
+    # Old middle row of precedence: ('left', '%', '*', '/', '^', GREATEREQ, LESSEQ, '<', '>', EQUAL),
 
-    # Ignores empty user inputs
+    def __init__(self):
+        self.env = { }
+
+    # Ignores whitespace
     @_('')
     def statement(self, p):
         pass
 
+    # @_('FUN ID "(" ")" ARROW statement')
+    # def statement(self, p):
+    #     return ('fun_def', p.ID, p.statement)
+
+    # @_('ID "(" ")"')
+    # def statement(self, p):
+    #     return ('fun_call', p.ID)
+
+######################################################################################################
+
     # Variable Declaration ====================================================================
-    # Assigns expression to a variable
+
+    # Assigns value to a variable
+    @_('var_assign')
+    def statement(self, p):
+        return p.var_assign
+
     @_('ID "=" expr')
-    def statement(self, p):
-        self.ids[p.ID] = p.expr
-        return p.ID, p.expr
+    def var_assign(self, p):
+        return 'var_assign', p.ID, p.expr
 
-    @_('ID "=" RECTANGLE')
-    def statement(self, p):
-        self.ids[p.ID] = p.RECTANGLE
-        return p.ID, p.RECTANGLE
+    @_('ID "=" STRING')
+    def var_assign(self, p):
+        return 'var_assign', p.ID, p.STRING
 
-    @_('ID "=" SQUARE')
-    def statement(self, p):
-        self.ids[p.ID] = p.SQUARE
-        return p.ID, p.SQUARE
-
-    @_('ID "=" CIRCLE')
-    def statement(self, p):
-        self.ids[p.ID] = p.CIRCLE
-        return p.ID, p.CIRCLE
-
-    @_('ID "=" TRIANGLE')
-    def statement(self, p):
-        self.ids[p.ID] = p.TRIANGLE
-        return p.ID, p.TRIANGLE
-
-    @_('ID "=" MATRIX')
-    def statement(self, p):
-        self.ids[p.ID] = p.MATRIX
-        return p.ID, p.MATRIX
-
-    @_('ID "=" VECTOR')
-    def statement(self, p):
-        self.ids[p.ID] = p.VECTOR
-        return p.ID, p.VECTOR
+    #
+    # @_('ID "=" RECTANGLE')
+    # def statement(self, p):
+    #     self.ids[p.ID] = p.RECTANGLE
+    #     return p.ID, p.RECTANGLE
+    #
+    # @_('ID "=" SQUARE')
+    # def statement(self, p):
+    #     self.ids[p.ID] = p.SQUARE
+    #     return p.ID, p.SQUARE
+    #
+    # @_('ID "=" CIRCLE')
+    # def statement(self, p):
+    #     self.ids[p.ID] = p.CIRCLE
+    #     return p.ID, p.CIRCLE
+    #
+    # @_('ID "=" TRIANGLE')
+    # def statement(self, p):
+    #     self.ids[p.ID] = p.TRIANGLE
+    #     return p.ID, p.TRIANGLE
+    #
+    # @_('ID "=" MATRIX')
+    # def statement(self, p):
+    #     self.ids[p.ID] = p.MATRIX
+    #     return p.ID, p.MATRIX
+    #
+    # @_('ID "=" VECTOR')
+    # def statement(self, p):
+    #     self.ids[p.ID] = p.VECTOR
+    #     return p.ID, p.VECTOR
 
     # Prints out expression once it no longer has any operations left
     @_('expr')
     def statement(self, p):
-        print(p.expr)
+        return p.expr
 
     # Expression Handling =======================================================================================
     # Does addition
     @_('expr "+" expr')
     def expr(self, p):
-        return p.expr0 + p.expr1
-
-    # Does addition
-    @_('expr "%" expr')
-    def expr(self, p):
-        return p.expr0 % p.expr1
+        return 'add', p.expr0, p.expr1
 
     # Does subtraction
     @_('expr "-" expr')
     def expr(self, p):
-        return p.expr0 - p.expr1
+        return 'sub', p.expr0, p.expr1
 
     # Does multiplication
     @_('expr "*" expr')
     def expr(self, p):
-        return p.expr0 * p.expr1
+        return 'mul', p.expr0, p.expr1
 
     # Does division
     @_('expr "/" expr')
     def expr(self, p):
-        return p.expr0 / p.expr1
+        return 'div', p.expr0, p.expr1
 
-    @_('expr "<" expr')
+    # Does module
+    @_('expr "%" expr')
     def expr(self, p):
-        return p.expr0 < p.expr1
+        return 'mod', p.expr0, p.expr1
 
-    @_('expr ">" expr')
-    def expr(self, p):
-        return p.expr0 > p.expr1
-
-    # Does exponent
+    # Does exponent TO BE ADDED
     @_('expr "^" expr')
     def expr(self, p):
-        return p.expr0 ** p.expr1
+        return 'exp', p.expr0, p.expr1
 
     # Parses individual negative numbers
     @_('"-" expr %prec UMINUS')
     def expr(self, p):
-        return -p.expr
+        return p.expr
 
     # Parses expressions inside parenthesis
     @_('"(" expr ")"')
@@ -194,152 +207,247 @@ class HissuiParser(Parser):
     # Parses numbers
     @_('NUMBER')
     def expr(self, p):
-        return p.NUMBER
+        return 'num', p.NUMBER
 
-    # Parses numbers
-    @_('STRING')
-    def expr(self, p):
-        return p.STRING
+    # # Parses strings
+    # @_('STRING')
+    # def expr(self, p):
+    #     return 'str', p.STRING
 
     # Parses variables
     @_('ID')
     def expr(self, p):
-        try:
-            return self.ids[p.ID]
-        except LookupError:
-            print("Undefined id '%s'" % p.ID)
-            return 0
-
-    @_('expr GREATEREQ expr')
-    def expr(self, p):
-        return p.expr0 >= p.expr1
-
-    @_('expr LESSEQ expr')
-    def expr(self, p):
-        return p.expr0 <= p.expr1
-
-    @_('expr EQUAL expr')
-    def expr(self, p):
-        return p.expr0 == p.expr1
+        return 'var', p.ID
 
     # Condition Handling ====================================================================
-    @_('expr GREATEREQ expr')
-    def condition(self, p):
-        return p.expr0 >= p.expr1
 
-    @_('expr LESSEQ expr')
-    def condition(self, p):
-        return p.expr0 <= p.expr1
-
-    @_('expr "<" expr')
-    def condition(self, p):
-        return p.expr0 < p.expr1
-
-    @_('expr ">" expr')
-    def condition(self, p):
-        return p.expr0 > p.expr1
-
+    # Parses the EQUAL token
     @_('expr EQUAL expr')
     def condition(self, p):
-        return p.expr0 == p.expr1
+        return 'equal', p.expr0, p.expr1
 
-    @_('NUMBER')
+    # Parses greater-than or equal token.
+    @_('expr GREATEREQ expr')
     def condition(self, p):
-        return p.NUMBER
+        return 'greater_eq', p.expr0, p.expr1
+
+    # Parses less-than or equal token.
+    @_('expr LESSEQ expr')
+    def condition(self, p):
+        return 'less_eq', p.expr0, p.expr1
+
+    # Parses greater-than token.
+    @_('expr ">" expr')
+    def condition(self, p):
+        return 'greater', p.expr0, p.expr1
+
+    # Parses less-than token.
+    @_('expr "<" expr')
+    def condition(self, p):
+        return 'less', p.expr0, p.expr1
 
     # If statements =====================================================================================
 
     @_('IF condition THEN statement ELSE statement')
     def statement(self, p):
-        if p.condition:
-            print(p.statement0[0])
-            self.ids[p.statement0[0]] = p.statement0[1]
-            return p.statement0[1]
-        else:
-            self.ids[p.statement1[0]] = p.statement1[1]
-            return p.statement1[1]
+        return 'if_stmt', p.condition, ('branch', p.statement0, p.statement1)
 
-    @_('IF condition THEN expr ELSE expr')
+    # Loops =============================================================================
+
+    @_('FOR var_assign TO expr THEN statement')
     def statement(self, p):
-        if p.condition:
-            print(p.expr0)
-            return p.expr0
-        else:
-            print(p.expr1)
-
-            return p.expr1
+        return 'for_loop', ('for_loop_setup', p.var_assign, p.expr), p.statement
 
     # Lists===========================================================================================
 
-    @_('ID "=" LIST "[" "]"')
-    def statement(self, p):
-        try:
-            inp = input("Enter List Elements: ")
-            if inp != "":
-                lst = list(map(int, inp.split(",")))
+    # @_('ID "=" LIST "[" "]"')
+    # def statement(self, p):
+    #     try:
+    #         inp = input("Enter List Elements: ")
+    #         if inp != "":
+    #             lst = list(map(int, inp.split(",")))
+    #         else:
+    #             lst = []
+    #         self.ids[p.ID] = lst
+    #         return p.ID, lst
+    #     except TypeError:
+    #         print("Error variable is not a list")
+    #
+    # @_('ID "[" NUMBER "]"')
+    # def expr(self, p):
+    #     try:
+    #         index = self.ids[p.ID][p.NUMBER]
+    #         return index
+    #     except TypeError:
+    #         print("Error variable is not a list")
+    #
+    # @_('ID "." SIZE "("  ")" ')
+    # def expr(self, p):
+    #     try:
+    #         size = len(self.ids[p.ID])
+    #         return size
+    #     except TypeError:
+    #         print("Error variable is not a list")
+    #
+    # @_('ID "." REMOVE "(" NUMBER ")"')
+    # def expr(self, p):
+    #     try:
+    #         del self.ids[p.ID][p.NUMBER]
+    #         return self.ids[p.ID]
+    #     except TypeError:
+    #         print("Error variable is not a list")
+    #
+    # @_('ID "." ADD "(" expr ")"')
+    # def expr(self, p):
+    #     try:
+    #         self.ids[p.ID].append(p.expr)
+    #         return self.ids[p.ID]
+    #     except TypeError:
+    #         print("Error variable is not a list")
+    #
+    # @_('ID "[" NUMBER "]" "=" expr')
+    # def expr(self, p):
+    #     try:
+    #         self.ids[p.ID][p.NUMBER] = p.expr
+    #         return self.ids[p.ID]
+    #     except TypeError:
+    #         print("Error variable is not a list")
+    #
+    # @_('ID "." SORT "("  ")"')
+    # def expr(self, p):
+    #     try:
+    #         self.ids[p.ID].sort()
+    #         return self.ids[p.ID]
+    #     except TypeError:
+    #         print("Error variable is not a list")
+
+
+class HussuiInterpreter:
+
+    def __init__(self, tree, env):
+        self.env = env
+        result = self.walkTree(tree)
+        if result is not None and isinstance(result, int):
+            print(result)
+        if isinstance(result, str) and result[0] == '"':
+            print(result)
+
+    def walkTree(self, node):
+
+        # Node base cases ======================================================================
+
+        # Reached node with number value
+        if isinstance(node, int):
+            return node
+
+        # Reached node with string value
+        if isinstance(node, str):
+            return node
+
+        # Reached empty node
+        if node is None:
+            return None
+
+        # Tree algorithms =============================================================================
+
+        # Goes down the tree nodes
+        if node[0] == 'program':
+            if node[1] is None:
+                self.walkTree(node[2])
             else:
-                lst = []
-            self.ids[p.ID] = lst
-            return p.ID, lst
-        except TypeError:
-            print("Error variable is not a list")
+                self.walkTree(node[1])
+                self.walkTree(node[2])
 
-    @_('ID "[" NUMBER "]"')
-    def expr(self, p):
-        try:
-            index = self.ids[p.ID][p.NUMBER]
-            return index
-        except TypeError:
-            print("Error variable is not a list")
+        if node[0] == 'num':
+            return node[1]
 
-    @_('ID "." SIZE "("  ")" ')
-    def expr(self, p):
-        try:
-            size = len(self.ids[p.ID])
-            return size
-        except TypeError:
-            print("Error variable is not a list")
+        if node[0] == 'str':
+            return node[1]
 
-    @_('ID "." REMOVE "(" NUMBER ")"')
-    def expr(self, p):
-        try:
-            del self.ids[p.ID][p.NUMBER]
-            return self.ids[p.ID]
-        except TypeError:
-            print("Error variable is not a list")
+        # Interprets if statements
+        if node[0] == 'if_stmt':
+            result = self.walkTree(node[1])
+            if result:
+                return self.walkTree(node[2][1])
+            return self.walkTree(node[2][2])
 
-    @_('ID "." ADD "(" expr ")"')
-    def expr(self, p):
-        try:
-            self.ids[p.ID].append(p.expr)
-            return self.ids[p.ID]
-        except TypeError:
-            print("Error variable is not a list")
+        # Checks if two numbers are equal to each other
+        if node[0] == 'equal':
+            return self.walkTree(node[1]) == self.walkTree(node[2])
+        elif node[0] == 'greater_eq':
+            return self.walkTree(node[1]) >= self.walkTree(node[2])
+        elif node[0] == 'less_eq':
+            return self.walkTree(node[1]) <= self.walkTree(node[2])
+        elif node[0] == 'greater':
+            return self.walkTree(node[1]) > self.walkTree(node[2])
+        elif node[0] == 'less':
+            return self.walkTree(node[1]) < self.walkTree(node[2])
 
-    @_('ID "[" NUMBER "]" "=" expr')
-    def expr(self, p):
-        try:
-            self.ids[p.ID][p.NUMBER] = p.expr
-            return self.ids[p.ID]
-        except TypeError:
-            print("Error variable is not a list")
+        # Handles the creation of user functions:
+        # if node[0] == 'fun_def':
+        #     self.env[node[1]] = node[2]
+        #
+        # if node[0] == 'fun_call':
+        #     try:
+        #         return self.walkTree(self.env[node[1]])
+        #     except LookupError:
+        #         print("Undefined function '%s'" % node[1])
+        #         return 0
 
-    @_('ID "." SORT "("  ")"')
-    def expr(self, p):
-        try:
-            self.ids[p.ID].sort()
-            return self.ids[p.ID]
-        except TypeError:
-            print("Error variable is not a list")
+        # Handles math operations
+        if node[0] == 'add':
+            return self.walkTree(node[1]) + self.walkTree(node[2])
+        elif node[0] == 'sub':
+            return self.walkTree(node[1]) - self.walkTree(node[2])
+        elif node[0] == 'mul':
+            return self.walkTree(node[1]) * self.walkTree(node[2])
+        elif node[0] == 'div':
+            return self.walkTree(node[1]) / self.walkTree(node[2])
+        elif node[0] == 'mod':
+            return self.walkTree(node[1]) % self.walkTree(node[2])
+        elif node[0] == 'exp':
+            return self.walkTree(node[1]) ** self.walkTree(node[2])
+
+        # Assigns value to variables ===========================================================================
+        if node[0] == 'var_assign':
+            self.env[node[1]] = self.walkTree(node[2])
+            return node[1]
+
+        if node[0] == 'var':
+            try:
+                return self.env[node[1]]
+            except LookupError:
+                print("Undefined variable '"+node[1]+"' found!")
+                return 0
+
+        # For loop algorithms =======================d=============================================================
+        if node[0] == 'for_loop':
+            if node[1][0] == 'for_loop_setup':
+                loop_setup = self.walkTree(node[1])
+
+                loop_count = self.env[loop_setup[0]]
+                loop_limit = loop_setup[1]
+
+                for i in range(loop_count+1, loop_limit+1):
+                    res = self.walkTree(node[2])
+                    if res is not None:
+                        print(res)
+                    self.env[loop_setup[0]] = i
+                del self.env[loop_setup[0]]
+
+        if node[0] == 'for_loop_setup':
+            return self.walkTree(node[1]), self.walkTree(node[2])
 
 
 if __name__ == '__main__':
     lexer = HissuiLexer()
     parser = HissuiParser()
+    env = {}
     while True:
         try:
-            text = input('Hissui > ')
+            text = input('basic > ')
         except EOFError:
             break
         if text:
-            parser.parse(lexer.tokenize(text))
+            tree = parser.parse(lexer.tokenize(text))
+            HussuiInterpreter(tree, env)
