@@ -14,13 +14,8 @@ class HissuiLexer(Lexer):
               IF, THEN, ELSE, FOR, TO,
 
               # Comparison tokens
-              GREATEREQ, LESSEQ,
+              GREATEREQ, LESSEQ, COMMA,
 
-              # Shape Tokens
-              SQUARE, RECTANGLE, TRIANGLE, CIRCLE,
-
-              # Extra Structure Tokens
-              MATRIX, VECTOR,
               # List Tokens
               LIST, SIZE, REMOVE, ADD, SORT}
 
@@ -48,6 +43,7 @@ class HissuiLexer(Lexer):
     GREATEREQ = r'>='
     LESSEQ = r'<='
     EQUAL = r'=='
+    COMMA = r','
     # COLON = r':'
 
     # implementing standard language clauses.
@@ -66,12 +62,12 @@ class HissuiLexer(Lexer):
     ID['sort'] = SORT
 
     # Adding different functional objects
-    ID['square'] = SQUARE
-    ID["rectangle"] = RECTANGLE
-    ID['triangle'] = TRIANGLE
-    ID['circle'] = CIRCLE
-    ID['matrix'] = MATRIX
-    ID['vector'] = VECTOR
+    # ID['square'] = SQUARE
+    # ID["rectangle"] = RECTANGLE
+    # ID['triangle'] = TRIANGLE
+    # ID['circle'] = CIRCLE
+    # ID['matrix'] = MATRIX
+    # ID['vector'] = VECTOR
 
     # new token for object creation
     # ID['new'] = NEW
@@ -95,7 +91,7 @@ class HissuiParser(Parser):
     # Old middle row of precedence: ('left', '%', '*', '/', '^', GREATEREQ, LESSEQ, '<', '>', EQUAL),
 
     def __init__(self):
-        self.env = { }
+        self.env = {}
 
     # Ignores whitespace
     @_('')
@@ -110,7 +106,7 @@ class HissuiParser(Parser):
     # def statement(self, p):
     #     return ('fun_call', p.ID)
 
-######################################################################################################
+    ######################################################################################################
 
     # Variable Declaration ====================================================================
 
@@ -210,9 +206,9 @@ class HissuiParser(Parser):
         return 'num', p.NUMBER
 
     # # Parses strings
-    # @_('STRING')
-    # def expr(self, p):
-    #     return 'str', p.STRING
+    @_('STRING')
+    def expr(self, p):
+        return 'str', p.STRING
 
     # Parses variables
     @_('ID')
@@ -252,74 +248,80 @@ class HissuiParser(Parser):
     def statement(self, p):
         return 'if_stmt', p.condition, ('branch', p.statement0, p.statement1)
 
+    @_('IF condition THEN expr ELSE expr')
+    def statement(self, p):
+        return 'if_stmt', p.condition, ('branch', p.expr0, p.expr1)
+
     # Loops =============================================================================
 
     @_('FOR var_assign TO expr THEN statement')
     def statement(self, p):
         return 'for_loop', ('for_loop_setup', p.var_assign, p.expr), p.statement
 
-    # Lists===========================================================================================
+    @_('FOR var_assign TO expr THEN expr')
+    def statement(self, p):
+        return 'for_loop', ('for_loop_setup', p.var_assign, p.expr0), p.expr1
 
-    # @_('ID "=" LIST "[" "]"')
-    # def statement(self, p):
-    #     try:
-    #         inp = input("Enter List Elements: ")
-    #         if inp != "":
-    #             lst = list(map(int, inp.split(",")))
-    #         else:
-    #             lst = []
-    #         self.ids[p.ID] = lst
-    #         return p.ID, lst
-    #     except TypeError:
-    #         print("Error variable is not a list")
-    #
-    # @_('ID "[" NUMBER "]"')
-    # def expr(self, p):
-    #     try:
-    #         index = self.ids[p.ID][p.NUMBER]
-    #         return index
-    #     except TypeError:
-    #         print("Error variable is not a list")
-    #
-    # @_('ID "." SIZE "("  ")" ')
-    # def expr(self, p):
-    #     try:
-    #         size = len(self.ids[p.ID])
-    #         return size
-    #     except TypeError:
-    #         print("Error variable is not a list")
-    #
-    # @_('ID "." REMOVE "(" NUMBER ")"')
-    # def expr(self, p):
-    #     try:
-    #         del self.ids[p.ID][p.NUMBER]
-    #         return self.ids[p.ID]
-    #     except TypeError:
-    #         print("Error variable is not a list")
-    #
-    # @_('ID "." ADD "(" expr ")"')
-    # def expr(self, p):
-    #     try:
-    #         self.ids[p.ID].append(p.expr)
-    #         return self.ids[p.ID]
-    #     except TypeError:
-    #         print("Error variable is not a list")
-    #
-    # @_('ID "[" NUMBER "]" "=" expr')
-    # def expr(self, p):
-    #     try:
-    #         self.ids[p.ID][p.NUMBER] = p.expr
-    #         return self.ids[p.ID]
-    #     except TypeError:
-    #         print("Error variable is not a list")
-    #
-    # @_('ID "." SORT "("  ")"')
-    # def expr(self, p):
-    #     try:
-    #         self.ids[p.ID].sort()
-    #         return self.ids[p.ID]
-    #     except TypeError:
-    #         print("Error variable is not a list")
+    @_('ID "=" LIST "[" [ expr ] { COMMA expr } "]" ')
+    def var_assign(self, p):
+        lst2 = []
+        if p.expr0 is None:
+            lst = []
+        else:
+            lst = p.expr1
+            lst.insert(0, p.expr0)
+        for i in range(0, len(lst)):
+            lst2.append(lst[i][1])
+        return 'var_assign', p.ID, lst2
+
+    @_('ID "[" NUMBER "]"')
+    def expr(self, p):
+        try:
+            return 'index', p.ID, p.NUMBER
+        except TypeError:
+            print("Error variable is not a list")
+
+    @_('ID "[" ID "]"')
+    def expr(self, p):
+        try:
+            return 'index_ID', p.ID0, p.ID1
+        except TypeError:
+            print("Error variable is not a list")
+
+    @_('ID "." SIZE "("  ")" ')
+    def expr(self, p):
+        try:
+            return "size", p.ID
+        except TypeError:
+            print("Error variable is not a list")
+
+    @_('ID "." REMOVE "(" NUMBER ")"')
+    def expr(self, p):
+        try:
+            return "delete", p.ID, p.NUMBER
+        except TypeError:
+            print("Error variable is not a list")
+
+    @_('ID "." ADD "(" expr ")"')
+    def expr(self, p):
+        try:
+            return "lst_add", p.ID, p.expr
+        except TypeError:
+            print("Error variable is not a list")
+
+    @_('ID "[" NUMBER "]" "=" expr')
+    def expr(self, p):
+        try:
+            return "index_change", p.ID, p.NUMBER, p.expr
+        except TypeError:
+            print("Error variable is not a list")
+
+    @_('ID "." SORT "("  ")"')
+    def expr(self, p):
+        try:
+            return "sort", p.ID
+        except TypeError:
+            print("Error variable is not a list")
 
 
 class HussuiInterpreter:
@@ -330,6 +332,8 @@ class HussuiInterpreter:
         if result is not None and isinstance(result, int):
             print(result)
         if isinstance(result, str) and result[0] == '"':
+            print(result)
+        if isinstance(result, list):
             print(result)
 
     def walkTree(self, node):
@@ -342,6 +346,9 @@ class HussuiInterpreter:
 
         # Reached node with string value
         if isinstance(node, str):
+            return node
+
+        if isinstance(node, list):
             return node
 
         # Reached empty node
@@ -417,7 +424,7 @@ class HussuiInterpreter:
             try:
                 return self.env[node[1]]
             except LookupError:
-                print("Undefined variable '"+node[1]+"' found!")
+                print("Undefined variable '" + node[1] + "' found!")
                 return 0
 
         # For loop algorithms =======================d=============================================================
@@ -428,15 +435,40 @@ class HussuiInterpreter:
                 loop_count = self.env[loop_setup[0]]
                 loop_limit = loop_setup[1]
 
-                for i in range(loop_count+1, loop_limit+1):
+                for i in range(loop_count + 1, loop_limit + 1):
                     res = self.walkTree(node[2])
-                    if res is not None:
-                        print(res)
                     self.env[loop_setup[0]] = i
                 del self.env[loop_setup[0]]
 
         if node[0] == 'for_loop_setup':
-            return self.walkTree(node[1]), self.walkTree(node[2])
+            return self.walkTree(node[1]),self.walkTree(node[2])
+
+        if node[0] == 'index':
+            lst = self.env[node[1]]
+            return lst[node[2]]
+
+        if node[0] == 'size':
+            return len(self.env[node[1]])
+
+        if node[0] == 'delete':
+            self.env[node[1]].pop(node[2])
+            return self.env[node[1]]
+
+        if node[0] == 'lst_add':
+            self.env[node[1]].append(node[2][1])
+            return self.env[node[1]]
+
+        if node[0] == 'index_change':
+            self.env[node[1]][node[2]] = node[3][1]
+            return self.env[node[1]]
+
+        if node[0] == 'sort':
+            self.env[node[1]].sort()
+            return self.env[node[1]]
+
+        if node[0] == 'index_ID':
+            lst = self.env[node[1]]
+            return self.env[node[1]][self.env[node[2]]]
 
 
 if __name__ == '__main__':
@@ -445,7 +477,7 @@ if __name__ == '__main__':
     env = {}
     while True:
         try:
-            text = input('basic > ')
+            text = input('Hissui > ')
         except EOFError:
             break
         if text:
