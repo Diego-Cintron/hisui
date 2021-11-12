@@ -40,7 +40,7 @@ class HissuiLexer(Lexer):
     def NUMBER(self, t):
         t.value = int(t.value)
         return t
-
+    #
     # Defining strings
     STRING = r'\".*?\"'
 
