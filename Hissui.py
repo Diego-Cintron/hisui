@@ -1,5 +1,7 @@
 from sly import Lexer
 from sly import Parser
+from Objects.vector import vector
+import math
 
 
 # Creating a Lexer who inherits from sly's lexer.oy class
@@ -15,6 +17,9 @@ class HissuiLexer(Lexer):
 
               # Comparison tokens
               GREATEREQ, LESSEQ, COMMA,
+
+              # Vectors
+              VECTOR, DOT, CROSS,XCOMP, YCOMP, ZCOMP,MAGNITUDE,COMPONENTS,
 
               # List Tokens
               LIST, SIZE, REMOVE, ADD, SORT}
@@ -60,6 +65,14 @@ class HissuiLexer(Lexer):
     ID['remove'] = REMOVE
     ID['add'] = ADD
     ID['sort'] = SORT
+
+    ID['vector'] = VECTOR
+    ID['cross'] = CROSS
+    ID['dot'] = DOT
+    ID['xc'] = XCOMP
+    ID['yc'] = YCOMP
+    ID['zc'] = ZCOMP
+    ID['magnitude'] = MAGNITUDE
 
     # Adding different functional objects
     # ID['square'] = SQUARE
@@ -149,10 +162,6 @@ class HissuiParser(Parser):
     #     self.ids[p.ID] = p.MATRIX
     #     return p.ID, p.MATRIX
     #
-    # @_('ID "=" VECTOR')
-    # def statement(self, p):
-    #     self.ids[p.ID] = p.VECTOR
-    #     return p.ID, p.VECTOR
 
     # Prints out expression once it no longer has any operations left
     @_('expr')
@@ -262,6 +271,7 @@ class HissuiParser(Parser):
     def statement(self, p):
         return 'for_loop', ('for_loop_setup', p.var_assign, p.expr0), p.expr1
 
+    # List===============================================================
     @_('ID "=" LIST "[" [ expr ] { COMMA expr } "]" ')
     def var_assign(self, p):
         lst2 = []
@@ -323,17 +333,59 @@ class HissuiParser(Parser):
         except TypeError:
             print("Error variable is not a list")
 
+    # vector ===============================================================
+    @_('ID "=" VECTOR "(" expr COMMA expr [ COMMA expr ] ")" ')
+    def var_assign(self, p):
+        if p.expr2 is None:
+            v = vector(p.expr0[1], p.expr1[1],0)
+        else:
+            v = vector(p.expr0[1], p.expr1[1], p.expr2[1])
+        return "var_assign", p.ID, v
+
+    @_('ID "." XCOMP "(" ")" ')
+    def expr(self, p):
+        return 'xcomp', p.ID
+
+    @_('ID "." YCOMP "(" ")" ')
+    def expr(self, p):
+        return 'ycomp', p.ID
+
+    @_('ID "." ZCOMP "(" ")" ')
+    def expr(self, p):
+        return 'zcomp', p.ID
+
+    @_('ID "." MAGNITUDE "(" ")" ')
+    def expr(self, p):
+        return 'magnitude', p.ID
+
+    @_('ID "." DOT "(" ID ")" ')
+    def expr(self, p):
+        return 'dot', p.ID0,p.ID1
+
+    @_('ID "." CROSS "(" ID ")" ')
+    def expr(self, p):
+        return 'cross', p.ID0,p.ID1
+
+    @_('ID "." COMPONENTS "("  ")" ')
+    def expr(self, p):
+        return 'components', p.ID
+
 
 class HussuiInterpreter:
 
     def __init__(self, tree, env):
         self.env = env
         result = self.walkTree(tree)
+        if result is not None and isinstance(result, float):
+            print(result)
         if result is not None and isinstance(result, int):
             print(result)
         if isinstance(result, str) and result[0] == '"':
             print(result)
         if isinstance(result, list):
+            print(result)
+
+        if isinstance(result, vector):
             print(result)
 
     def walkTree(self, node):
@@ -349,6 +401,12 @@ class HussuiInterpreter:
             return node
 
         if isinstance(node, list):
+            return node
+
+        if isinstance(node, vector):
+            return node
+
+        if isinstance(node, float):
             return node
 
         # Reached empty node
@@ -441,7 +499,7 @@ class HussuiInterpreter:
                 del self.env[loop_setup[0]]
 
         if node[0] == 'for_loop_setup':
-            return self.walkTree(node[1]),self.walkTree(node[2])
+            return self.walkTree(node[1]), self.walkTree(node[2])
 
         if node[0] == 'index':
             lst = self.env[node[1]]
@@ -469,6 +527,34 @@ class HussuiInterpreter:
         if node[0] == 'index_ID':
             lst = self.env[node[1]]
             return self.env[node[1]][self.env[node[2]]]
+
+        if node[0] == 'xcomp':
+            xcomp = self.env[node[1]].x
+            return xcomp
+
+        if node[0] == 'ycomp':
+            ycomp = self.env[node[1]].y
+            return ycomp
+
+        if node[0] == 'zcomp':
+            zcomp = self.env[node[1]].z
+            return zcomp
+
+        if node[0] == 'magnitude':
+            v = self.env[node[1]]
+            return v.magnitude()
+
+        if node[0] == 'dot':
+            v = self.env[node[1]]
+            v2 = self.env[node[2]]
+            return v.dot(v2)
+
+        if node[0] == 'cross':
+            v = self.env[node[1]]
+            v2 = self.env[node[2]]
+            return v.cross(v2)
+
+
 
 
 if __name__ == '__main__':
