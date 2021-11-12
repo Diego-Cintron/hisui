@@ -11,7 +11,7 @@ class HissuiLexer(Lexer):
     #   SQUARE, CIRCLE, RECTANGLE, TRIANGLE, VECTOR, MATRIX, NEW, FOR,
     #   ELSEIF, IN, COMMA, COLON, RETURN,
     # Tokens that were transferred to "literals": ASSIGN, RP, LP, RB, LB
-    tokens = {ID, NUMBER, STRING, EQUAL,
+    tokens = {ID, NUMBER, STRING, EQUAL,COLON,
               # statement tokens
               IF, THEN, ELSE, FOR, TO,
 
@@ -20,6 +20,9 @@ class HissuiLexer(Lexer):
 
               # Vectors
               VECTOR, DOT, CROSS,XCOMP, YCOMP, ZCOMP,MAGNITUDE,COMPONENTS,
+
+              #Dictionary
+              DICTIONARY,
 
               # List Tokens
               LIST, SIZE, REMOVE, ADD, SORT}
@@ -49,7 +52,7 @@ class HissuiLexer(Lexer):
     LESSEQ = r'<='
     EQUAL = r'=='
     COMMA = r','
-    # COLON = r':'
+    COLON = r':'
 
     # implementing standard language clauses.
     ID['if'] = IF
@@ -74,13 +77,14 @@ class HissuiLexer(Lexer):
     ID['zc'] = ZCOMP
     ID['magnitude'] = MAGNITUDE
 
+    ID['dictionary'] = DICTIONARY
+
     # Adding different functional objects
     # ID['square'] = SQUARE
     # ID["rectangle"] = RECTANGLE
     # ID['triangle'] = TRIANGLE
     # ID['circle'] = CIRCLE
     # ID['matrix'] = MATRIX
-    # ID['vector'] = VECTOR
 
     # new token for object creation
     # ID['new'] = NEW
@@ -369,6 +373,13 @@ class HissuiParser(Parser):
     @_('ID "." COMPONENTS "("  ")" ')
     def expr(self, p):
         return 'components', p.ID
+
+    # Dictionaries ==================================
+    @_('ID "=" DICTIONARY "{" expr COLON expr "}" ')
+    def var_assign(self, p):
+        dic = {}
+        dic[p.expr0] = p.expr1
+        return 'var_assign', p.ID, dic
 
 
 class HussuiInterpreter:
