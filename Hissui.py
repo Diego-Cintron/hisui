@@ -1,19 +1,17 @@
 from sly import Lexer
 from sly import Parser
 from Objects.vector import vector
-import math
 
 
 # Creating a Lexer who inherits from sly's lexer.oy class
 class HissuiLexer(Lexer):
     # Inputting the tokens that the parser will be able to use.
     # Temporarily REMOVED TOKENS:
-    #   SQUARE, CIRCLE, RECTANGLE, TRIANGLE, VECTOR, MATRIX, NEW, FOR,
+    #   SQUARE, CIRCLE, RECTANGLE, TRIANGLE, VECTOR, MATRIX, NEW,
     #   ELSEIF, IN, COMMA, COLON, RETURN,
-    # Tokens that were transferred to "literals": ASSIGN, RP, LP, RB, LB
-    tokens = {ID, NUMBER, STRING, EQUAL,COLON,
+    tokens = {ID, NUMBER, STRING, EQUAL, COLON,
               # statement tokens
-              IF, THEN, ELSE, FOR, TO,
+              IF, THEN, ELSE, FOR, TO, WHILE,
 
               # Comparison tokens
               GREATEREQ, LESSEQ, COMMA,
@@ -61,6 +59,7 @@ class HissuiLexer(Lexer):
     ID['list'] = LIST
     ID['for'] = FOR
     ID['to'] = TO
+    ID['while'] = WHILE
 
     # List methods
     ID['list'] = LIST
@@ -89,7 +88,7 @@ class HissuiLexer(Lexer):
     # new token for object creation
     # ID['new'] = NEW
 
-    # error handling
+    # Error handling
     def error(self, t):
         print("Illegal character '%s'" % t.value[0])
         self.index += 1
@@ -104,8 +103,6 @@ class HissuiParser(Parser):
         ('left', '%', '*', '/', '^', GREATEREQ, LESSEQ, '<', '>', EQUAL),
         ('right', 'UMINUS'),
     )
-
-    # Old middle row of precedence: ('left', '%', '*', '/', '^', GREATEREQ, LESSEQ, '<', '>', EQUAL),
 
     def __init__(self):
         self.env = {}
@@ -123,9 +120,7 @@ class HissuiParser(Parser):
     # def statement(self, p):
     #     return ('fun_call', p.ID)
 
-    ######################################################################################################
-
-    # Variable Declaration ====================================================================
+    # Variable Declaration =============================================================================================
 
     # Assigns value to a variable
     @_('var_assign')
@@ -172,7 +167,8 @@ class HissuiParser(Parser):
     def statement(self, p):
         return p.expr
 
-    # Expression Handling =======================================================================================
+    # Expression Handling ==============================================================================================
+
     # Does addition
     @_('expr "+" expr')
     def expr(self, p):
@@ -198,7 +194,7 @@ class HissuiParser(Parser):
     def expr(self, p):
         return 'mod', p.expr0, p.expr1
 
-    # Does exponent TO BE ADDED
+    # Does exponent
     @_('expr "^" expr')
     def expr(self, p):
         return 'exp', p.expr0, p.expr1
@@ -228,7 +224,7 @@ class HissuiParser(Parser):
     def expr(self, p):
         return 'var', p.ID
 
-    # Condition Handling ====================================================================
+    # Condition Handling ===============================================================================================
 
     # Parses the EQUAL token
     @_('expr EQUAL expr')
@@ -255,7 +251,7 @@ class HissuiParser(Parser):
     def condition(self, p):
         return 'less', p.expr0, p.expr1
 
-    # If statements =====================================================================================
+    # If-statements ====================================================================================================
 
     @_('IF condition THEN statement ELSE statement')
     def statement(self, p):
@@ -265,7 +261,11 @@ class HissuiParser(Parser):
     def statement(self, p):
         return 'if_stmt', p.condition, ('branch', p.expr0, p.expr1)
 
-    # Loops =============================================================================
+    # Loops ============================================================================================================
+
+    @_('WHILE condition THEN statement')
+    def statement(self, p):
+        return 'while_loop', p.condition, p.statement
 
     @_('FOR var_assign TO expr THEN statement')
     def statement(self, p):
@@ -275,7 +275,7 @@ class HissuiParser(Parser):
     def statement(self, p):
         return 'for_loop', ('for_loop_setup', p.var_assign, p.expr0), p.expr1
 
-    # List===============================================================
+    # Lists ============================================================================================================
     @_('ID "=" LIST "[" [ expr ] { COMMA expr } "]" ')
     def var_assign(self, p):
         lst2 = []
@@ -337,7 +337,7 @@ class HissuiParser(Parser):
         except TypeError:
             print("Error variable is not a list")
 
-    # vector ===============================================================
+    # Vectors =====================================================================================================
     @_('ID "=" VECTOR "(" expr COMMA expr [ COMMA expr ] ")" ')
     def var_assign(self, p):
         if p.expr2 is None:
@@ -401,30 +401,33 @@ class HussuiInterpreter:
 
     def walkTree(self, node):
 
-        # Node base cases ======================================================================
+        # Node base cases ======================================================================================
 
         # Reached node with number value
         if isinstance(node, int):
+            return node
+
+        # Reached node with a floating-point number
+        if isinstance(node, float):
             return node
 
         # Reached node with string value
         if isinstance(node, str):
             return node
 
+        # Reached node with a list
         if isinstance(node, list):
             return node
 
+        # Reached node with a vector
         if isinstance(node, vector):
-            return node
-
-        if isinstance(node, float):
             return node
 
         # Reached empty node
         if node is None:
             return None
 
-        # Tree algorithms =============================================================================
+        # Tree algorithms =======================================================================================
 
         # Goes down the tree nodes
         if node[0] == 'program':
@@ -434,30 +437,13 @@ class HussuiInterpreter:
                 self.walkTree(node[1])
                 self.walkTree(node[2])
 
+        # User input number on the console
         if node[0] == 'num':
             return node[1]
 
+        # User input string on the console. (TO BE REMOVED)
         if node[0] == 'str':
             return node[1]
-
-        # Interprets if statements
-        if node[0] == 'if_stmt':
-            result = self.walkTree(node[1])
-            if result:
-                return self.walkTree(node[2][1])
-            return self.walkTree(node[2][2])
-
-        # Checks if two numbers are equal to each other
-        if node[0] == 'equal':
-            return self.walkTree(node[1]) == self.walkTree(node[2])
-        elif node[0] == 'greater_eq':
-            return self.walkTree(node[1]) >= self.walkTree(node[2])
-        elif node[0] == 'less_eq':
-            return self.walkTree(node[1]) <= self.walkTree(node[2])
-        elif node[0] == 'greater':
-            return self.walkTree(node[1]) > self.walkTree(node[2])
-        elif node[0] == 'less':
-            return self.walkTree(node[1]) < self.walkTree(node[2])
 
         # Handles the creation of user functions:
         # if node[0] == 'fun_def':
@@ -470,7 +456,7 @@ class HussuiInterpreter:
         #         print("Undefined function '%s'" % node[1])
         #         return 0
 
-        # Handles math operations
+        # Math operations ======================================================================================
         if node[0] == 'add':
             return self.walkTree(node[1]) + self.walkTree(node[2])
         elif node[0] == 'sub':
@@ -496,7 +482,31 @@ class HussuiInterpreter:
                 print("Undefined variable '" + node[1] + "' found!")
                 return 0
 
-        # For loop algorithms =======================d=============================================================
+        # Handles comparisons =====================================================================================
+        if node[0] == 'equal':
+            return self.walkTree(node[1]) == self.walkTree(node[2])
+        elif node[0] == 'greater_eq':
+            return self.walkTree(node[1]) >= self.walkTree(node[2])
+        elif node[0] == 'less_eq':
+            return self.walkTree(node[1]) <= self.walkTree(node[2])
+        elif node[0] == 'greater':
+            return self.walkTree(node[1]) > self.walkTree(node[2])
+        elif node[0] == 'less':
+            return self.walkTree(node[1]) < self.walkTree(node[2])
+
+        # If-statements algorithm ==============================================================================
+        if node[0] == 'if_stmt':
+            result = self.walkTree(node[1])
+            if result:
+                return self.walkTree(node[2][1])
+            return self.walkTree(node[2][2])
+
+        # While loop algorithm ===================================================================================
+        if node[0] == 'while_loop':
+            while self.walkTree(node[1]):
+                res = self.walkTree(node[2])
+
+        # For loop algorithm =======================d=============================================================
         if node[0] == 'for_loop':
             if node[1][0] == 'for_loop_setup':
                 loop_setup = self.walkTree(node[1])
@@ -507,11 +517,13 @@ class HussuiInterpreter:
                 for i in range(loop_count + 1, loop_limit + 1):
                     res = self.walkTree(node[2])
                     self.env[loop_setup[0]] = i
+
                 del self.env[loop_setup[0]]
 
         if node[0] == 'for_loop_setup':
             return self.walkTree(node[1]), self.walkTree(node[2])
 
+        # List operations =======================================================================================
         if node[0] == 'index':
             lst = self.env[node[1]]
             return lst[node[2]]
@@ -539,6 +551,7 @@ class HussuiInterpreter:
             lst = self.env[node[1]]
             return self.env[node[1]][self.env[node[2]]]
 
+        # Matrix operations ======================================================================================
         if node[0] == 'xcomp':
             xcomp = self.env[node[1]].x
             return xcomp
@@ -564,8 +577,6 @@ class HussuiInterpreter:
             v = self.env[node[1]]
             v2 = self.env[node[2]]
             return v.cross(v2)
-
-
 
 
 if __name__ == '__main__':
