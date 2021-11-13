@@ -1,6 +1,10 @@
 from sly import Lexer
 from sly import Parser
 from Objects.vector import vector
+from Objects.SHAPES2D.rectangle import rectangle
+from Objects.SHAPES2D.square import square
+from Objects.SHAPES2D.circle import circle
+from Objects.SHAPES2D.triangle import triangle
 
 
 # Creating a Lexer who inherits from sly's lexer.oy class
@@ -17,10 +21,14 @@ class HissuiLexer(Lexer):
               GREATEREQ, LESSEQ, COMMA,
 
               # Vectors
-              VECTOR, DOT, CROSS,XCOMP, YCOMP, ZCOMP,MAGNITUDE,COMPONENTS,
+              VECTOR, DOT, CROSS, XCOMP, YCOMP, ZCOMP, MAGNITUDE, COMPONENTS,
 
-              #Dictionary
+              # Dictionary
               DICTIONARY,
+
+              # Shapes
+              RECTANGLE, SQUARE, AREA, PERIMETER, CIRCLE, DIAMETER, CIRCUMFERENCE,
+              TRIANGLE,OPPOSITE,ADJACENT,HYPOTENUSE,
 
               # List Tokens
               LIST, SIZE, REMOVE, ADD, SORT}
@@ -38,6 +46,7 @@ class HissuiLexer(Lexer):
     def NUMBER(self, t):
         t.value = int(t.value)
         return t
+
     #
     # Defining strings
     STRING = r'\".*?\"'
@@ -79,10 +88,17 @@ class HissuiLexer(Lexer):
     ID['dictionary'] = DICTIONARY
 
     # Adding different functional objects
-    # ID['square'] = SQUARE
-    # ID["rectangle"] = RECTANGLE
-    # ID['triangle'] = TRIANGLE
-    # ID['circle'] = CIRCLE
+    ID['square'] = SQUARE
+    ID["rectangle"] = RECTANGLE
+    ID['area'] = AREA
+    ID['perimeter'] = PERIMETER
+    ID['circumference'] = CIRCUMFERENCE
+    ID['diameter'] = DIAMETER
+    ID['triangle'] = TRIANGLE
+    ID['circle'] = CIRCLE
+    ID['hypotenuse'] = HYPOTENUSE
+    ID['opposite'] = OPPOSITE
+    ID['adjacent'] = ADJACENT
     # ID['matrix'] = MATRIX
 
     # new token for object creation
@@ -135,27 +151,6 @@ class HissuiParser(Parser):
     def var_assign(self, p):
         return 'var_assign', p.ID, p.STRING
 
-    #
-    # @_('ID "=" RECTANGLE')
-    # def statement(self, p):
-    #     self.ids[p.ID] = p.RECTANGLE
-    #     return p.ID, p.RECTANGLE
-    #
-    # @_('ID "=" SQUARE')
-    # def statement(self, p):
-    #     self.ids[p.ID] = p.SQUARE
-    #     return p.ID, p.SQUARE
-    #
-    # @_('ID "=" CIRCLE')
-    # def statement(self, p):
-    #     self.ids[p.ID] = p.CIRCLE
-    #     return p.ID, p.CIRCLE
-    #
-    # @_('ID "=" TRIANGLE')
-    # def statement(self, p):
-    #     self.ids[p.ID] = p.TRIANGLE
-    #     return p.ID, p.TRIANGLE
-    #
     # @_('ID "=" MATRIX')
     # def statement(self, p):
     #     self.ids[p.ID] = p.MATRIX
@@ -341,7 +336,7 @@ class HissuiParser(Parser):
     @_('ID "=" VECTOR "(" expr COMMA expr [ COMMA expr ] ")" ')
     def var_assign(self, p):
         if p.expr2 is None:
-            v = vector(p.expr0[1], p.expr1[1],0)
+            v = vector(p.expr0[1], p.expr1[1], 0)
         else:
             v = vector(p.expr0[1], p.expr1[1], p.expr2[1])
         return "var_assign", p.ID, v
@@ -364,11 +359,11 @@ class HissuiParser(Parser):
 
     @_('ID "." DOT "(" ID ")" ')
     def expr(self, p):
-        return 'dot', p.ID0,p.ID1
+        return 'dot', p.ID0, p.ID1
 
     @_('ID "." CROSS "(" ID ")" ')
     def expr(self, p):
-        return 'cross', p.ID0,p.ID1
+        return 'cross', p.ID0, p.ID1
 
     @_('ID "." COMPONENTS "("  ")" ')
     def expr(self, p):
@@ -380,6 +375,55 @@ class HissuiParser(Parser):
         dic = {}
         dic[p.expr0] = p.expr1
         return 'var_assign', p.ID, dic
+
+    # Shapes =================================================
+    @_('ID "=" RECTANGLE "(" expr COMMA expr ")" ')
+    def var_assign(self, p):
+        rect = rectangle(p.expr0[1], p.expr1[1])
+        return 'var_assign', p.ID, rect
+
+    @_('ID "=" SQUARE "(" expr ")" ')
+    def var_assign(self, p):
+        sq = square(p.expr[1])
+        return 'var_assign', p.ID, sq
+
+    @_('ID "=" CIRCLE "(" expr ")" ')
+    def var_assign(self, p):
+        circ = circle(p.expr[1])
+        return 'var_assign', p.ID, circ
+
+    @_('ID "." AREA "("  ")" ')
+    def expr(self, p):
+        return 'area', p.ID
+
+    @_('ID "." PERIMETER "("  ")" ')
+    def expr(self, p):
+        return 'perimeter', p.ID
+
+    @_('ID "." DIAMETER "("  ")" ')
+    def expr(self, p):
+        return 'diameter', p.ID
+
+    @_('ID "." CIRCUMFERENCE "("  ")" ')
+    def expr(self, p):
+        return 'circumference', p.ID
+
+    @_('ID "=" TRIANGLE "(" expr COMMA [  expr ] COMMA [  expr ] COMMA [ expr ] ")" ')
+    def var_assign(self, p):
+        tr = triangle(p.expr0,p.expr1,p.expr2,p.expr3)
+        return 'var_assign', p.ID, tr
+
+    @_('ID "." OPPOSITE "("  ")" ')
+    def expr(self, p):
+        return 'opposite', p.ID
+
+    @_('ID "." ADJACENT "("  ")" ')
+    def expr(self, p):
+        return 'adjacent', p.ID
+
+    @_('ID "." HYPOTENUSE "("  ")" ')
+    def expr(self, p):
+        return 'hypotenuse', p.ID
 
 
 class HussuiInterpreter:
@@ -397,6 +441,18 @@ class HussuiInterpreter:
             print(result)
 
         if isinstance(result, vector):
+            print(result)
+
+        if isinstance(result, rectangle):
+            print(result)
+
+        if isinstance(result, square):
+            print(result)
+
+        if isinstance(result, circle):
+            print(result)
+
+        if isinstance(result, triangle):
             print(result)
 
     def walkTree(self, node):
@@ -421,6 +477,18 @@ class HussuiInterpreter:
 
         # Reached node with a vector
         if isinstance(node, vector):
+            return node
+
+        if isinstance(node, rectangle):
+            return node
+
+        if isinstance(node, square):
+            return node
+
+        if isinstance(node, circle):
+            return node
+
+        if isinstance(node, triangle):
             return node
 
         # Reached empty node
@@ -577,6 +645,34 @@ class HussuiInterpreter:
             v = self.env[node[1]]
             v2 = self.env[node[2]]
             return v.cross(v2)
+
+        if node[0] == 'area':
+            shape = self.env[node[1]]
+            return shape.area()
+
+        if node[0] == 'perimeter':
+            shape = self.env[node[1]]
+            return shape.perimeter()
+
+        if node[0] == 'diameter':
+            shape = self.env[node[1]]
+            return shape.diameter
+
+        if node[0] == 'circumference':
+            shape = self.env[node[1]]
+            return shape.circumference()
+
+        if node[0] == 'adjacent':
+            shape = self.env[node[1]]
+            return shape.findAdjacent()
+
+        if node[0] == 'hypotenuse':
+            shape = self.env[node[1]]
+            return shape.findHypotenuse()
+
+        if node[0] == 'opposite':
+            shape = self.env[node[1]]
+            return shape.findOpposite()
 
 
 if __name__ == '__main__':
