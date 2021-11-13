@@ -1,0 +1,71 @@
+Hissui Documentation:
+
+Lists ===================================================
+variable = list[]               ----> creates an empty list
+
+variable = list[1,2,3,.....,n]  ----> creates an array containing n elements
+
+variable[index]                 ----> returns element at index position
+
+variable[index] = element       ----> changes element at index position
+
+variable.size()                 ----> returns the size of a list
+
+variable.remove(index)          ----> removes the element at the specified index
+
+variable.add(element)           ----> adds the element to the end of the list
+
+variable.sort()                 ----> sorts the element in the list
+
+Shapes ===================================================
+variable = square(s)            ----> creates a square of sides s
+
+variable = rectangle(l,w)       ----> creates a rectangle of length l and width w
+
+variable = triangle(o,a,h,t)    ----> creates a triangle with either sides of opposite (o) , adjacent (a) and hypotenuse
+                                      (h) with an optional parameter for the angle theta (t).
+
+            |                    ----> creates a triangle with one of the sides, opposite (o) , adjacent (a) or
+                                      hypotenuse (h), and an angle theta (t).
+
+variable.opposite()             ----> returns the calculated opposite side, using either the adjacent or hypotenuse side
+                                      and the angle theta (for triangle objects only)
+
+variable.adjacent()             ----> returns the calculated adjacent side, using either the opposite or hypotenuse side
+                                      and the angle theta (for triangle objects only)
+
+variable.hypotenuse()           ----> returns the calculated adjacent side, using either the opposite or adjacent side
+                                      and the angle theta (for triangle objects only)
+
+variable.perimeter()            ----> returns the perimeter of the shape (circle excluded)
+
+variable.area()                 ----> returns the area of the shape
+
+variable.circle(r)              ----> creates a circle of radius r
+
+variable.diameter()             ----> returns the diameter (circle only)
+
+variable.circumference()        ----> returns the circumference (circles only)
+
+Vectors =====================================================================
+
+variable = vector(x,y,z)        ----> creates a vector of x, y and optional z components.
+
+variable.dot( vector )          ----> returns the dot product of two vectors
+
+variable.cross( vector )        ----> returns the cross product of two vectors
+
+variable.xc()                   ----> returns the x component of a vector
+
+variable.yc()                   ----> returns the y component of a vector
+
+variable.zc()                   ----> returns the z component of a vector
+
+Matrix ======================================================================
+
+Dictionaries ================================================================
+
+
+
+
+
