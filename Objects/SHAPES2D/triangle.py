@@ -18,7 +18,7 @@ class triangle:
             self.hypotenuse = None
 
         try:
-            self.theta = theta[1]
+            self.theta = math.radians(theta[1])
         except:
             self.theta = None
 
@@ -36,9 +36,11 @@ class triangle:
         return self.opposite
 
     def findAdjacent(self):
+
         if self.hypotenuse is not None:
             self.adjacent = self.hypotenuse * math.cos(self.theta)
             return self.adjacent
+        print((self.theta))
         self.adjacent = self.opposite/(math.tan(self.theta))
         return self.adjacent
 
