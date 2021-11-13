@@ -408,7 +408,7 @@ class HissuiParser(Parser):
     def expr(self, p):
         return 'circumference', p.ID
 
-    @_('ID "=" TRIANGLE "(" expr COMMA [  expr ] COMMA [  expr ] COMMA [ expr ] ")" ')
+    @_('ID "=" TRIANGLE "(" [ expr ] COMMA [  expr ] COMMA [  expr ] COMMA [ expr ] ")" ')
     def var_assign(self, p):
         tr = triangle(p.expr0,p.expr1,p.expr2,p.expr3)
         return 'var_assign', p.ID, tr
