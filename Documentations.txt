@@ -63,6 +63,25 @@ variable.zc()                   ----> returns the z component of a vector
 
 Matrix ======================================================================
 
+variable = matrix([a,b,c.....,n]) --> creates a 1 row matrix with n elements
+
+variable.row([a,b,c,...n])       ---> adds a row of n elements to the matrix
+
+variable.col([a;b;c;...n])       ---> adds a column of n elements to the matrix
+
+variable.printMatrix()          ----> prints the matrix
+
+variable.mAdd(matrix2)          ---> adds all the elements of matrix B to matrix A
+
+variable.mSub(matrix2)          ---> subtracts all the elements of matrix B to matrix A
+
+variable.mMult(matrix2)          ---> multiplies all the elements of matrix B to matrix A
+
+variable.mDiv(matrix2)          ---> divides all the elements of matrix B to matrix A
+
+variable.mPow(exponent)         ---> raises all elements of a matrix to the given exponent
+
+
 Dictionaries ================================================================
 
 
