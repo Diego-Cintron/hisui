@@ -27,7 +27,11 @@ class HissuiLexer(Lexer):
               TRIANGLE, OPPOSITE, ADJACENT, HYPOTENUSE,
 
               # List Tokens
-              LIST, SIZE, REMOVE, ADD, SORT}
+              LIST, SIZE, REMOVE, ADD, SORT,
+
+              #Function token
+              FUNCTION,
+              }
 
     # Lexer can read letters and combinations of letters and numbers
     ID = r'[a-zA-Z_][a-zA-Z0-9_]*'
@@ -107,6 +111,9 @@ class HissuiLexer(Lexer):
     ID['hypotenuse'] = HYPOTENUSE
     ID['opposite'] = OPPOSITE
     ID['adjacent'] = ADJACENT
+
+    # Function definition
+    ID['function'] = FUNCTION
 
     # Error handling
     def error(self, t):

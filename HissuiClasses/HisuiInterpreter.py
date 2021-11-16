@@ -110,15 +110,15 @@ class HussuiInterpreter:
             return node[1]
 
         # Handles the creation of user functions:
-        # if node[0] == 'fun_def':
-        #     self.env[node[1]] = node[2]
-        #
-        # if node[0] == 'fun_call':
-        #     try:
-        #         return self.walkTree(self.env[node[1]])
-        #     except LookupError:
-        #         print("Undefined function '%s'" % node[1])
-        #         return 0
+        if node[0] == 'function_def':
+            self.env[node[1]] = node[2]
+
+        if node[0] == 'function_call':
+            try:
+                return self.walkTree(self.env[node[1]])
+            except LookupError:
+                print("Undefined function '%s'" % node[1])
+                return 0
 
         # Math operations ======================================================================================
         if node[0] == 'add':

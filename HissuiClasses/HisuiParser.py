@@ -26,14 +26,6 @@ class HissuiParser(Parser):
     def statement(self, p):
         pass
 
-    # @_('FUN ID "(" ")" ARROW statement')
-    # def statement(self, p):
-    #     return ('fun_def', p.ID, p.statement)
-
-    # @_('ID "(" ")"')
-    # def statement(self, p):
-    #     return ('fun_call', p.ID)
-
     # Variable Declaration =============================================================================================
 
     # Assigns value to a variable
@@ -144,6 +136,14 @@ class HissuiParser(Parser):
     def condition(self, p):
         return 'less', p.expr0, p.expr1
 
+    # Function Declaration and Calling =================================================================================
+    @_('FUNCTION ID "(" ")" COLON statement')
+    def statement(self, p):
+        return 'function_def', p.ID, p.statement
+
+    @_('ID "(" ")"')
+    def statement(self, p):
+        return 'function_call', p.ID
 
     # If-statements ====================================================================================================
 
