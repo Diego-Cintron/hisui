@@ -215,6 +215,19 @@ class HussuiInterpreter:
             lst = self.env[node[1]]
             return self.env[node[1]][self.env[node[2]]]
 
+        # Dictionary Methods ========================================
+        if node[0] == 'get':
+            dic = self.env[node[1]]
+            return dic[node[2][1]]
+
+        if node[0] == 'get_keys':
+            lst = self.env[node[1]].keys()
+            return print(lst)
+
+        if node[0] == 'get_values':
+            lst = self.env[node[1]].values()
+            return print(lst)
+
         # Matrix operations ======================================================================================
         if node[0] == 'xcomp':
             xcomp = self.env[node[1]].x
