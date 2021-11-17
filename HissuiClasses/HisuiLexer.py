@@ -17,7 +17,7 @@ class HissuiLexer(Lexer):
               VECTOR, DOT, CROSS, XCOMP, YCOMP, ZCOMP, MAGNITUDE, COMPONENTS,
 
               # Dictionary
-              DICTIONARY,
+              DICTIONARY,GVALUES,GKEYS,GET,
 
               # Matrix
               MATRIX, PRINTMATRIX, MADD, MSUB, MMULT, MDIV, MPOW,DETERMINANT,
@@ -86,6 +86,9 @@ class HissuiLexer(Lexer):
     ID['magnitude'] = MAGNITUDE
 
     ID['dictionary'] = DICTIONARY
+    ID['get'] = GET
+    ID['gValues'] = GVALUES
+    ID['gKeys'] = GKEYS
 
     # Matrix
     ID['matrix'] = MATRIX

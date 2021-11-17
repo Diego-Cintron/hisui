@@ -278,6 +278,27 @@ class HissuiParser(Parser):
             dic.update({lst[i][1]: lst2[i][1]})
         return 'var_assign', p.ID, dic
 
+    @_('ID "." GET "(" expr ")" ')
+    def expr(self, p):
+        try:
+            return "get", p.ID, p.expr
+        except TypeError:
+            print("Error variable is not a dictionary")
+
+    @_('ID "." GKEYS "("  ")" ')
+    def expr(self, p):
+        try:
+            return "get_keys", p.ID
+        except TypeError:
+            print("Error variable is not a dictionary")
+
+    @_('ID "." GVALUES "("  ")" ')
+    def expr(self, p):
+        try:
+            return "get_values", p.ID
+        except TypeError:
+            print("Error variable is not a dictionary")
+
     # Shapes =================================================
     @_('ID "=" RECTANGLE "(" expr COMMA expr ")" ')
     def var_assign(self, p):
