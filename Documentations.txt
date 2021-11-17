@@ -81,6 +81,8 @@ variable.mDiv(matrix2)          ---> divides all the elements of matrix B to mat
 
 variable.mPow(exponent)         ---> raises all elements of a matrix to the given exponent
 
+variable.determinant()          ---> returns the determinant of the matrix
+
 
 Dictionaries ================================================================
 

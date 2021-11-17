@@ -312,7 +312,7 @@ class HissuiParser(Parser):
 
     @_('ID "=" TRIANGLE "(" [ expr ] COMMA [  expr ] COMMA [  expr ] COMMA [ expr ] ")" ')
     def var_assign(self, p):
-        tr = triangle(p.expr0,p.expr1,p.expr2,p.expr3)
+        tr = triangle(p.expr0, p.expr1, p.expr2, p.expr3)
         return 'var_assign', p.ID, tr
 
     @_('ID "." OPPOSITE "("  ")" ')
@@ -328,52 +328,56 @@ class HissuiParser(Parser):
         return 'hypotenuse', p.ID
 
     # Matrix ==================================================================================
-    @_('ID "=" MATRIX "(" "[" expr { COMMA expr } "]" ")"')
+    @_('ID "=" MATRIX "(" "[" expr { COMMA expr } "]" COMMA "[" expr { COMMA expr } "]" COMMA "[" expr { COMMA expr } '
+       '"]" ")"')
     def var_assign(self, p):
         lst = []
-        for i in range(0,len(p.expr1)):
-            lst.append(p.expr1[i][1])
-        lst.insert(0, p.expr0[1])
+
+        row1, row2, row3 = [], [], []
+
+        for i in range(0, len(p.expr1)):
+            row1.append(p.expr1[i][1])
+        row1.insert(0, p.expr0[1])
+        lst.append(row1)
+
+        for i in range(0, len(p.expr3)):
+            row2.append(p.expr3[i][1])
+        row2.insert(0, p.expr2[1])
+        lst.append(row2)
+
+        for i in range(0, len(p.expr5)):
+            row3.append(p.expr5[i][1])
+        row3.insert(0, p.expr4[1])
+        lst.append(row3)
+
         m = matrix(lst)
         return 'var_assign', p.ID, m
-
-    @_('ID "." ROW "(" "[" expr { COMMA expr } "]" ")" ')
-    def expr(self, p):
-        lst = []
-        for i in range(0, len(p.expr1)):
-            lst.append(p.expr1[i][1])
-        lst.insert(0, p.expr0[1])
-        return 'rowADD', p.ID, lst
 
     @_('ID "." PRINTMATRIX "("  ")" ')
     def expr(self, p):
         return 'printMatrix', p.ID
 
-    @_('ID "." COL "(" "[" expr { SEMICOLON expr } "]" ")" ')
+    @_('ID "." MADD "(" ID ")" ')
     def expr(self, p):
-        lst = []
-        for i in range(0, len(p.expr1)):
-            lst.append(p.expr1[i][1])
-        lst.insert(0, p.expr0[1])
-        return 'colADD', p.ID, lst
+        return 'mADD', p.ID0, p.ID1
 
-    @_('ID "." MADD "(" expr ")" ')
+    @_('ID "." MSUB "(" ID ")" ')
     def expr(self, p):
-        return 'mADD', p.ID,p.expr
+        return 'mSUB', p.ID0,p.ID1
 
-    @_('ID "." MSUB "(" expr ")" ')
+    @_('ID "." MMULT "(" ID ")" ')
     def expr(self, p):
-        return 'mSUB', p.ID,p.expr
+        return 'mMult', p.ID0,p.ID1
 
-    @_('ID "." MMULT "(" expr ")" ')
+    @_('ID "." MDIV "(" ID ")" ')
     def expr(self, p):
-        return 'mMult', p.ID,p.expr
-
-    @_('ID "." MDIV "(" expr ")" ')
-    def expr(self, p):
-        return 'mDiv', p.ID,p.expr
+        return 'mDiv', p.ID0,p.ID1
 
     @_('ID "." MPOW "(" expr ")" ')
     def expr(self, p):
-        return 'mPow', p.ID,p.expr
+        return 'mPow', p.ID, p.expr
+
+    @_('ID "." DETERMINANT "("  ")" ')
+    def expr(self, p):
+        return 'determinant', p.ID
 

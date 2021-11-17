@@ -20,7 +20,7 @@ class HissuiLexer(Lexer):
               DICTIONARY,
 
               # Matrix
-              MATRIX, ROW, PRINTMATRIX, SEMICOLON, COL, MADD, MSUB, MMULT, MDIV, MPOW,
+              MATRIX, PRINTMATRIX, MADD, MSUB, MMULT, MDIV, MPOW,DETERMINANT,
 
               # Shapes
               RECTANGLE, SQUARE, AREA, PERIMETER, CIRCLE, DIAMETER, CIRCUMFERENCE,
@@ -60,7 +60,6 @@ class HissuiLexer(Lexer):
     EQUAL = r'=='
     COMMA = r','
     COLON = r':'
-    SEMICOLON = r';'
 
     # implementing standard language clauses.
     ID['if'] = IF
@@ -90,14 +89,13 @@ class HissuiLexer(Lexer):
 
     # Matrix
     ID['matrix'] = MATRIX
-    ID['row'] = ROW
     ID['printMatrix'] = PRINTMATRIX
-    ID['col'] = COL
     ID['mAdd'] = MADD
     ID['mSub'] = MSUB
     ID['mMult'] = MMULT
     ID['mDiv'] = MDIV
     ID['mPow'] = MPOW
+    ID['determinant'] = DETERMINANT
 
     # Adding different functional objects
     ID['square'] = SQUARE

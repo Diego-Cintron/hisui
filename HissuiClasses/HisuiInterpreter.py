@@ -270,35 +270,35 @@ class HussuiInterpreter:
             shape = self.env[node[1]]
             return shape.findOpposite()
 
-        if node[0] == 'rowADD':
-            m = self.env[node[1]]
-            return m.addRow(node[2])
-
         if node[0] == 'printMatrix':
             m = self.env[node[1]]
             return m.printMatrix()
 
-        if node[0] == 'colADD':
-            m = self.env[node[1]]
-            return m.addCol(node[2])
-
         if node[0] == 'mADD':
             m = self.env[node[1]]
-            return m.addMatrix(node[2])
+            lst = self.env[node[2]].matrixToArray()
+            return m.addMatrix(lst)
 
         if node[0] == 'mSUB':
             m = self.env[node[1]]
-            return m.subtractMatrix(node[2])
+            lst = self.env[node[2]].matrixToArray()
+            return m.subtractMatrix(lst)
 
         if node[0] == 'mMult':
             m = self.env[node[1]]
-            return m.multiplyMatrix(node[2])
+            lst = self.env[node[2]].matrixToArray()
+            return m.multiplyMatrix(lst)
 
         if node[0] == 'mDiv':
             m = self.env[node[1]]
-            return m.divideMatrix(node[2])
+            lst = self.env[node[2]].matrixToArray()
+            return m.divideMatrix(lst)
 
         if node[0] == 'mPow':
             m = self.env[node[1]]
             return m.powMatrix(node[2][1])
+
+        if node[0] == 'determinant':
+            m = self.env[node[1]]
+            return m.determinant()
 
