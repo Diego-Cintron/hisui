@@ -94,12 +94,12 @@ class HussuiInterpreter:
         # Tree algorithms =======================================================================================
 
         # Goes down the tree nodes
-        if node[0] == 'program':
-            if node[1] is None:
-                self.walkTree(node[2])
-            else:
-                self.walkTree(node[1])
-                self.walkTree(node[2])
+        # if node[0] == 'program':
+        #     if node[1] is None:
+        #         self.walkTree(node[2])
+        #     else:
+        #         self.walkTree(node[1])
+        #         self.walkTree(node[2])
 
         # User input number on the console
         if node[0] == 'num':
@@ -109,7 +109,7 @@ class HussuiInterpreter:
         if node[0] == 'str':
             return node[1]
 
-        # Handles the creation of user functions:
+        # Handles the creation of user functions ===============================================================
         if node[0] == 'function_def':
             self.env[node[1]] = node[2]
 
@@ -139,7 +139,8 @@ class HussuiInterpreter:
             self.env[node[1]] = self.walkTree(node[2])
             return node[1]
 
-        if node[0] == 'var':
+        # Returns value of a variable
+        if node[0] == 'id':
             try:
                 return self.env[node[1]]
             except LookupError:

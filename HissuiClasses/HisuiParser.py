@@ -107,7 +107,7 @@ class HissuiParser(Parser):
     # Parses variables
     @_('ID')
     def expr(self, p):
-        return 'var', p.ID
+        return 'id', p.ID
 
     # Condition Handling ===============================================================================================
 

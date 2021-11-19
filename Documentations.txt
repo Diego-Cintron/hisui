@@ -1,5 +1,62 @@
 Hissui Documentation:
 
+Math ==========================================================
+parameter1 + parameter2         ----> returns the sum of two parameters or numbers
+
+parameter1 - parameter2         ----> returns the subtraction of two parameters
+
+parameter1 * parameter2         ----> returns the product of two parameters
+
+parameter1 / parameter2         ----> returns the division of two parameters
+
+parameter1 ^ parameter2         ----> returns the result of elevating the first parameter to the power of the second
+
+parameter1 % parameter2         ----> returns the module of two parameters
+
+-parameter                      -----> returns the opposite value of a parameter
+
+
+Basic Variable Declaration ====================================
+variable = {integer}            ----> creates an integer variable with the integer value given
+
+variable = {float}              ----> creates a floating-point variable with the floating-point value given
+
+variable = {string}             ----> creates a string variable with the string given
+
+
+Conditionals ===================================================
+parameter1 < parameter2         ----> returns true if the value of parameter1 is less than the value of parameter2
+
+parameter1 > parameter2         ----> returns true if the value of parameter1 is greater than the value of parameter2
+
+parameter1 <= parameter2        ----> returns true if the value of parameter1 is less than or equal to the value of
+                                      parameter2.
+
+parameter1 >= parameter2        ----> returns true if the value of parameter1 is greater than or equal to the value
+                                      of parameter2.
+
+parameter1 == parameter2        ----> returns true if the value of parameter1 is equal to the value of parameter2
+
+
+Functions ===========================================================
+function foo(): statement       ----> declares the function foo and assigns it a statement
+
+foo()                           ----> calls the function foo and runs the statement assigned to it
+
+
+If statements ========================================================
+if condition then statement1 else statement2 ----> checks the boolean value of the condition given; if true, runs the
+                                                   statement1. Otherwise runs the statement2.
+
+Loops ===============================================================
+while condition then statement  ----> checks the boolean value of the condition given; if true, repeatedly runs
+                                      the statement given until the condition is false.
+
+for variable = {i} to {j} then statement ----> Assigns number given to the variable given. If the value of the variable
+                                               is less than the value of the given j, then runs the statement and
+                                               increases the value of the variable by 1. This repeats until the value
+                                               of the variable is equal to or larger than the given j.
+
 Lists ===================================================
 variable = list[]               ----> creates an empty list
 
@@ -17,6 +74,7 @@ variable.add(element)           ----> adds the element to the end of the list
 
 variable.sort()                 ----> sorts the element in the list
 
+
 Shapes ===================================================
 variable = square(s)            ----> creates a square of sides s
 
@@ -25,7 +83,7 @@ variable = rectangle(l,w)       ----> creates a rectangle of length l and width 
 variable = triangle(o,a,h,t)    ----> creates a triangle with either sides of opposite (o) , adjacent (a) and hypotenuse
                                       (h) with an optional parameter for the angle theta (t).
 
-            |                    ----> creates a triangle with one of the sides, opposite (o) , adjacent (a) or
+                                ----> creates a triangle with one of the sides, opposite (o) , adjacent (a) or
                                       hypotenuse (h), and an angle theta (t).
 
 variable.opposite()             ----> returns the calculated opposite side, using either the adjacent or hypotenuse side
@@ -47,6 +105,7 @@ variable.diameter()             ----> returns the diameter (circle only)
 
 variable.circumference()        ----> returns the circumference (circles only)
 
+
 Vectors =====================================================================
 
 variable = vector(x,y,z)        ----> creates a vector of x, y and optional z components.
@@ -60,6 +119,7 @@ variable.xc()                   ----> returns the x component of a vector
 variable.yc()                   ----> returns the y component of a vector
 
 variable.zc()                   ----> returns the z component of a vector
+
 
 Matrix ======================================================================
 
