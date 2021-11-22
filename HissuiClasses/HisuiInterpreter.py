@@ -91,16 +91,6 @@ class HussuiInterpreter:
         if node is None:
             return None
 
-        # Tree algorithms =======================================================================================
-
-        # Goes down the tree nodes
-        # if node[0] == 'program':
-        #     if node[1] is None:
-        #         self.walkTree(node[2])
-        #     else:
-        #         self.walkTree(node[1])
-        #         self.walkTree(node[2])
-
         # User input number on the console
         if node[0] == 'num':
             return node[1]

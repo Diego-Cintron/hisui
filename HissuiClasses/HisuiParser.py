@@ -41,12 +41,6 @@ class HissuiParser(Parser):
     def var_assign(self, p):
         return 'var_assign', p.ID, p.STRING
 
-    # @_('ID "=" MATRIX')
-    # def statement(self, p):
-    #     self.ids[p.ID] = p.MATRIX
-    #     return p.ID, p.MATRIX
-    #
-
     # Prints out expression once it no longer has any operations left
     @_('expr')
     def statement(self, p):
