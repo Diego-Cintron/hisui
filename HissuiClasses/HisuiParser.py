@@ -93,11 +93,6 @@ class HissuiParser(Parser):
     def expr(self, p):
         return 'num', p.NUMBER
 
-    # # Parses strings
-    @_('STRING')
-    def expr(self, p):
-        return 'str', p.STRING
-
     # Parses variables
     @_('ID')
     def expr(self, p):
@@ -158,10 +153,6 @@ class HissuiParser(Parser):
     @_('FOR var_assign TO expr THEN statement')
     def statement(self, p):
         return 'for_loop', ('for_loop_setup', p.var_assign, p.expr), p.statement
-
-    @_('FOR var_assign TO expr THEN expr')
-    def statement(self, p):
-        return 'for_loop', ('for_loop_setup', p.var_assign, p.expr0), p.expr1
 
     # Lists ============================================================================================================
     @_('ID "=" LIST "[" [ expr ] { COMMA expr } "]" ')

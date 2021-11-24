@@ -80,11 +80,11 @@ variable = square(s)            ----> creates a square of sides s
 
 variable = rectangle(l,w)       ----> creates a rectangle of length l and width w
 
-variable = triangle(o,a,h,t)    ----> creates a triangle with either sides of opposite (o) , adjacent (a) and hypotenuse
+variable = triangle(o,a,h,)    ----> creates a triangle with either sides of opposite (o) , adjacent (a) and hypotenuse
                                       (h) with an optional parameter for the angle theta (t).
 
-                                ----> creates a triangle with one of the sides, opposite (o) , adjacent (a) or
-                                      hypotenuse (h), and an angle theta (t).
+variable = triangle(o (or) h (or) a,t) ----> creates a triangle with one of the sides, opposite (o) , adjacent (a) or
+                                       hypotenuse (h), and an angle theta (t).
 
 variable.opposite()             ----> returns the calculated opposite side, using either the adjacent or hypotenuse side
                                       and the angle theta (for triangle objects only)
@@ -123,11 +123,8 @@ variable.zc()                   ----> returns the z component of a vector
 
 Matrix ======================================================================
 
-variable = matrix([a,b,c.....,n]) --> creates a 1 row matrix with n elements
-
-variable.row([a,b,c,...n])       ---> adds a row of n elements to the matrix
-
-variable.col([a;b;c;...n])       ---> adds a column of n elements to the matrix
+variable = matrix([a,b,c],[d,e,f],[g,h,i]) --> creates a 3x3 matrix with the given elements, currently only 3x3 matrix
+                                               are supported.
 
 variable.printMatrix()          ----> prints the matrix
 

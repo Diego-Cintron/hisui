@@ -139,15 +139,57 @@ class HussuiInterpreter:
 
         # Handles comparisons =====================================================================================
         if node[0] == 'equal':
-            return node[1] == node[2]
+            if node[1][0] == 'id':
+                x = self.env[node[1][1]]
+            else:
+                x = node[1][1]
+            if node[2][0] == 'id':
+                y = self.env[node[2][1]]
+            else:
+                y = node[2][1]
+            return x == y
+
         elif node[0] == 'greater_eq':
-            return node[1] >= node[2]
+            if node[1][0] == 'id':
+                x = self.env[node[1][1]]
+            else:
+                x = node[1][1]
+            if node[2][0] == 'id':
+                y = self.env[node[2][1]]
+            else:
+                y = node[2][1]
+            return x >= y
+
         elif node[0] == 'less_eq':
-            return node[1] <= node[2]
+            if node[1][0] == 'id':
+                x = self.env[node[1][1]]
+            else:
+                x = node[1][1]
+            if node[2][0] == 'id':
+                y = self.env[node[2][1]]
+            else:
+                y = node[2][1]
+            return x <= y
         elif node[0] == 'greater':
-            return node[1] < node[2]
+            if node[1][0] == 'id':
+                x = self.env[node[1][1]]
+            else:
+                x = node[1][1]
+            if node[2][0] == 'id':
+                y = self.env[node[2][1]]
+            else:
+                y = node[2][1]
+            return x > y
         elif node[0] == 'less':
-            return node[1] > node[2]
+            if node[1][0] == 'id':
+                x = self.env[node[1][1]]
+            else:
+                x = node[1][1]
+            if node[2][0] == 'id':
+                y = self.env[node[2][1]]
+            else:
+                y = node[2][1]
+            return x < y
 
         # If-statements algorithm ==============================================================================
         if node[0] == 'if_stmt':
@@ -305,4 +347,3 @@ class HussuiInterpreter:
         if node[0] == 'determinant':
             m = self.env[node[1]]
             return m.determinant()
-
