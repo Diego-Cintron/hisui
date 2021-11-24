@@ -4,14 +4,21 @@ from Objects.SHAPES2D.square import square
 from Objects.SHAPES2D.circle import circle
 from Objects.SHAPES2D.triangle import triangle
 from Objects.matrix import matrix
+# Sly required, to install sly type: pip3 install sly on the terminal.
 
+# For Language syntax,methods and creation please read "Documentation.txt"
 
-class HussuiInterpreter:
+# Hisui Interpreter class, takes in the formatted grammar and builds an execution tree, afterwards the execution tree
+# is executed accordingly.
+
+class HisuiInterpreter:
 
     def __init__(self, tree, env):
         self.env = env
         result = self.walkTree(tree)
 
+        # If a result is returned and it's an expected final product then it's printed out, otherwise nothing is
+        # printed.
         if result is not None and isinstance(result, float):
             print(result)
 
@@ -69,21 +76,27 @@ class HussuiInterpreter:
         if isinstance(node, vector):
             return node
 
+        # Reached node with a rectangle
         if isinstance(node, rectangle):
             return node
 
+        # Reached node with a square
         if isinstance(node, square):
             return node
 
+        # Reached node with a circle
         if isinstance(node, circle):
             return node
 
+        # Reached node with a triangle
         if isinstance(node, triangle):
             return node
 
+        # Reached node with a matrix
         if isinstance(node, matrix):
             return node
 
+        # Reached node with a dictionary.
         if isinstance(node, dict):
             return node
 
@@ -261,7 +274,7 @@ class HussuiInterpreter:
             lst = self.env[node[1]].values()
             return print(lst)
 
-        # Matrix operations ======================================================================================
+        # Vector operations ======================================================================================
         if node[0] == 'xcomp':
             xcomp = self.env[node[1]].x
             return xcomp
@@ -288,6 +301,7 @@ class HussuiInterpreter:
             v2 = self.env[node[2]]
             return v.cross(v2)
 
+        # Shape operations ======================================================================================
         if node[0] == 'area':
             shape = self.env[node[1]]
             return shape.area()
@@ -316,6 +330,7 @@ class HussuiInterpreter:
             shape = self.env[node[1]]
             return shape.findOpposite()
 
+        # Matrix operations ======================================================================================
         if node[0] == 'printMatrix':
             m = self.env[node[1]]
             return m.printMatrix()

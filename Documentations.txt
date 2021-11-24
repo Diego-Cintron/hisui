@@ -1,4 +1,7 @@
-Hissui Documentation:
+Hisui Documentation:
+
+Here you will find all the methods currently supported by the language as well as a small description as to what each
+method does.
 
 Math ==========================================================
 parameter1 + parameter2         ----> returns the sum of two parameters or numbers

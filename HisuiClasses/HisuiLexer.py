@@ -1,11 +1,13 @@
 from sly import Lexer
+# Sly required, to install sly type: pip3 install sly on the terminal.
 
+# For Language syntax,methods and creation please read "Documentation.txt"
 
-class HissuiLexer(Lexer):
-    # Inputting the tokens that the parser will be able to use.
-    # Temporarily REMOVED TOKENS:
-    #   SQUARE, CIRCLE, RECTANGLE, TRIANGLE, VECTOR, MATRIX, NEW,
-    #   ELSEIF, IN, COMMA, COLON, RETURN,
+# Hisui Lexer Class, This class takes the input from the user and then divides it into tokens for the parser to then
+# use.
+class HisuiLexer(Lexer):
+
+    # Parser Token List.
     tokens = {ID, NUMBER, STRING, EQUAL, COLON,
               # statement tokens
               IF, THEN, ELSE, FOR, TO, WHILE,
@@ -13,23 +15,23 @@ class HissuiLexer(Lexer):
               # Comparison tokens
               GREATEREQ, LESSEQ, COMMA,
 
-              # Vectors
+              # Vectors Tokens
               VECTOR, DOT, CROSS, XCOMP, YCOMP, ZCOMP, MAGNITUDE, COMPONENTS,
 
-              # Dictionary
-              DICTIONARY,GVALUES,GKEYS,GET,
+              # Dictionary Tokens
+              DICTIONARY, GVALUES, GKEYS, GET,
 
-              # Matrix
-              MATRIX, PRINTMATRIX, MADD, MSUB, MMULT, MDIV, MPOW,DETERMINANT,
+              # Matrix Tokens
+              MATRIX, PRINTMATRIX, MADD, MSUB, MMULT, MDIV, MPOW, DETERMINANT,
 
-              # Shapes
+              # Shapes Tokens
               RECTANGLE, SQUARE, AREA, PERIMETER, CIRCLE, DIAMETER, CIRCUMFERENCE,
               TRIANGLE, OPPOSITE, ADJACENT, HYPOTENUSE,
 
               # List Tokens
               LIST, SIZE, REMOVE, ADD, SORT,
 
-              #Function token
+              # Function Tokens
               FUNCTION,
               }
 
@@ -52,7 +54,7 @@ class HissuiLexer(Lexer):
     STRING = r'\".*?\"'
 
     # stating the operators
-    literals = {'+', '-', '/', '*', '^', '=', '(', ')', '<', '>', '%', '[', ']', '.',"{","}"}
+    literals = {'+', '-', '/', '*', '^', '=', '(', ')', '<', '>', '%', '[', ']', '.', "{", "}"}
 
     # establishing function characters
     GREATEREQ = r'>='
@@ -61,7 +63,7 @@ class HissuiLexer(Lexer):
     COMMA = r','
     COLON = r':'
 
-    # implementing standard language clauses.
+    # Statements token remap
     ID['if'] = IF
     ID['then'] = THEN
     ID["else"] = ELSE
@@ -70,13 +72,14 @@ class HissuiLexer(Lexer):
     ID['to'] = TO
     ID['while'] = WHILE
 
-    # List methods
+    # List token remap
     ID['list'] = LIST
     ID['size'] = SIZE
     ID['remove'] = REMOVE
     ID['add'] = ADD
     ID['sort'] = SORT
 
+    # Vector token remap
     ID['vector'] = VECTOR
     ID['cross'] = CROSS
     ID['dot'] = DOT
@@ -85,12 +88,13 @@ class HissuiLexer(Lexer):
     ID['zc'] = ZCOMP
     ID['magnitude'] = MAGNITUDE
 
+    #Dictionary token remap
     ID['dictionary'] = DICTIONARY
     ID['get'] = GET
     ID['gValues'] = GVALUES
     ID['gKeys'] = GKEYS
 
-    # Matrix
+    # Matrix token remap
     ID['matrix'] = MATRIX
     ID['printMatrix'] = PRINTMATRIX
     ID['mAdd'] = MADD

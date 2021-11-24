@@ -1,16 +1,22 @@
-from HissuiClasses.HisuiLexer import HissuiLexer
-from HissuiClasses.HisuiParser import HissuiParser
-from HissuiClasses.HisuiInterpreter import HussuiInterpreter
+from HisuiClasses.HisuiLexer import HisuiLexer
+from HisuiClasses.HisuiParser import HisuiParser
+from HisuiClasses.HisuiInterpreter import HisuiInterpreter
+# Sly required, to install sly type: pip3 install sly on the terminal.
 
+# For Language syntax,methods and creation please read "Documentation.txt"
+
+# Hisui Main class, this class takes user input and passes it to the Parser then the Parser generates tokens and
+# sends it to the Lexer then the Lexer formats it accordingly and then it's finally sent to the interpreter where
+# it's executed according to the execution tree.
 if __name__ == '__main__':
-    lexer = HissuiLexer()
-    parser = HissuiParser()
+    lexer = HisuiLexer()
+    parser = HisuiParser()
     env = {}
     while True:
         try:
-            text = input('Hissui > ')
+            text = input('Hisui > ')
         except EOFError:
             break
         if text:
             tree = parser.parse(lexer.tokenize(text))
-            HussuiInterpreter(tree, env)
+            HisuiInterpreter(tree, env)
