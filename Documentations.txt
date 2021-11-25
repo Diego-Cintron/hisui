@@ -146,7 +146,11 @@ variable.determinant()          ---> returns the determinant of the matrix
 
 Dictionaries ================================================================
 
+variable = dictionary{key;value,key2;value2.........kn;vn} -> creates a dictionary with n number of keys and values
 
+variable.get(key)                                 ---> returns value corresponding to the specified key
 
+variable.getKeys()                                ---> returns a list of all keys in the dictionary.
 
+variable.getValues()                              ---> returns a list of all values in the dictionary.
 

@@ -4,12 +4,15 @@ from Objects.SHAPES2D.square import square
 from Objects.SHAPES2D.circle import circle
 from Objects.SHAPES2D.triangle import triangle
 from Objects.matrix import matrix
-from HissuiClasses.HisuiLexer import HissuiLexer
+from HisuiClasses.HisuiLexer import HisuiLexer
 from sly import Parser
+# Sly required, to install sly type: pip3 install sly on the terminal.
 
+# For Language syntax,methods and creation please read "Documentation.txt"
 
-class HissuiParser(Parser):
-    tokens = HissuiLexer.tokens
+# Hisui Parser takes in the tokens from the lexer and then formats them according to the specific determined grammer.
+class HisuiParser(Parser):
+    tokens = HisuiLexer.tokens
 
     # Tells code to use proper order of operation while doing math operations
     precedence = (
@@ -33,10 +36,12 @@ class HissuiParser(Parser):
     def statement(self, p):
         return p.var_assign
 
+    # Assigns value to a expr
     @_('ID "=" expr')
     def var_assign(self, p):
         return 'var_assign', p.ID, p.expr
 
+    # Assigns value to a string
     @_('ID "=" STRING')
     def var_assign(self, p):
         return 'var_assign', p.ID, p.STRING
@@ -146,15 +151,18 @@ class HissuiParser(Parser):
 
     # Loops ============================================================================================================
 
+    # While loop
     @_('WHILE condition THEN statement')
     def statement(self, p):
         return 'while_loop', p.condition, p.statement
 
+    # For loop
     @_('FOR var_assign TO expr THEN statement')
     def statement(self, p):
         return 'for_loop', ('for_loop_setup', p.var_assign, p.expr), p.statement
 
     # Lists ============================================================================================================
+
     @_('ID "=" LIST "[" [ expr ] { COMMA expr } "]" ')
     def var_assign(self, p):
         lst2 = []
