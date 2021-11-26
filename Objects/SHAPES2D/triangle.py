@@ -4,24 +4,24 @@ import math
 class triangle:
     def __init__(self, op, adj, hyp, theta):
 
-        try:
+        if op != 0:
             self.opposite = op[1]
-        except:
+        else:
             self.opposite = None
 
-        try:
+        if adj != 0:
             self.adjacent = adj[1]
-        except:
+        else:
             self.adjacent = None
 
-        try:
+        if hyp != 0:
             self.hypotenuse = hyp[1]
-        except:
+        else:
             self.hypotenuse = None
 
-        try:
+        if theta != 0:
             self.theta = math.radians(theta[1])
-        except:
+        else:
             self.theta = None
 
     def area(self):
@@ -42,7 +42,7 @@ class triangle:
         if self.hypotenuse is not None:
             self.adjacent = self.hypotenuse * math.cos(self.theta)
             return self.adjacent
-        print((self.theta))
+        print(self.theta)
         self.adjacent = self.opposite / (math.tan(self.theta))
         return self.adjacent
 
