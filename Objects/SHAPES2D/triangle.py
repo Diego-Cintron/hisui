@@ -4,22 +4,22 @@ import math
 class triangle:
     def __init__(self, op, adj, hyp, theta):
 
-        if op != 0:
+        if op[1] > 0:
             self.opposite = op[1]
         else:
             self.opposite = None
 
-        if adj != 0:
+        if adj[1] > 0:
             self.adjacent = adj[1]
         else:
             self.adjacent = None
 
-        if hyp != 0:
+        if hyp[1] > 0:
             self.hypotenuse = hyp[1]
         else:
             self.hypotenuse = None
 
-        if theta != 0:
+        if theta[1] > 0:
             self.theta = math.radians(theta[1])
         else:
             self.theta = None
