@@ -4,6 +4,8 @@ from Objects.SHAPES2D.square import square
 from Objects.SHAPES2D.circle import circle
 from Objects.SHAPES2D.triangle import triangle
 from Objects.matrix import matrix
+
+
 # Sly required, to install sly type: pip3 install sly on the terminal.
 
 # For Language syntax,methods and creation please read "Documentation.txt"
@@ -17,8 +19,8 @@ class HisuiInterpreter:
         self.env = env
         result = self.walkTree(tree)
 
-        # If a result is returned and it's an expected final product then it's printed out, otherwise nothing is
-        # printed.
+        # If a result is returned and it's an expected final product then it's printed out,
+        # otherwise nothing is printed.
         if result is not None and isinstance(result, float):
             print(result)
 
@@ -108,11 +110,7 @@ class HisuiInterpreter:
         if node[0] == 'num':
             return node[1]
 
-        # User input string on the console. (TO BE REMOVED)
-        if node[0] == 'str':
-            return node[1]
-
-        # Handles the creation of user functions ===============================================================
+        # Handles the creation and call of user functions ============================================================
         if node[0] == 'function_def':
             self.env[node[1]] = node[2]
 
@@ -123,7 +121,7 @@ class HisuiInterpreter:
                 print("Undefined function '%s'" % node[1])
                 return 0
 
-        # Math operations ======================================================================================
+        # Math operations ===========================================================================================
         if node[0] == 'add':
             return self.walkTree(node[1]) + self.walkTree(node[2])
         elif node[0] == 'sub':
@@ -137,7 +135,7 @@ class HisuiInterpreter:
         elif node[0] == 'exp':
             return self.walkTree(node[1]) ** self.walkTree(node[2])
 
-        # Assigns value to variables ===========================================================================
+        # Assigns value to variables =================================================================================
         if node[0] == 'var_assign':
             self.env[node[1]] = self.walkTree(node[2])
             return node[1]
@@ -150,7 +148,7 @@ class HisuiInterpreter:
                 print("Undefined variable '" + node[1] + "' found!")
                 return 0
 
-        # Handles comparisons =====================================================================================
+        # Handles comparisons ========================================================================================
         if node[0] == 'equal':
             if node[1][0] == 'id':
                 x = self.env[node[1][1]]
@@ -204,19 +202,19 @@ class HisuiInterpreter:
                 y = node[2][1]
             return x < y
 
-        # If-statements algorithm ==============================================================================
+        # If-statements algorithm ====================================================================================
         if node[0] == 'if_stmt':
             result = self.walkTree(node[1])
             if result:
                 return self.walkTree(node[2][1])
             return self.walkTree(node[2][2])
 
-        # While loop algorithm ===================================================================================
+        # While loop algorithm =======================================================================================
         if node[0] == 'while_loop':
             while self.walkTree(node[1]):
                 res = self.walkTree(node[2])
 
-        # For loop algorithm =======================d=============================================================
+        # For loop algorithm =========================================================================================
         if node[0] == 'for_loop':
             if node[1][0] == 'for_loop_setup':
                 loop_setup = self.walkTree(node[1])
@@ -233,7 +231,7 @@ class HisuiInterpreter:
         if node[0] == 'for_loop_setup':
             return self.walkTree(node[1]), self.walkTree(node[2])
 
-        # List operations =======================================================================================
+        # List operations ============================================================================================
         if node[0] == 'index':
             lst = self.env[node[1]]
             return lst[node[2]]
@@ -261,7 +259,7 @@ class HisuiInterpreter:
             lst = self.env[node[1]]
             return self.env[node[1]][self.env[node[2]]]
 
-        # Dictionary Methods ========================================
+        # Dictionary Methods =========================================================================================
         if node[0] == 'get':
             dic = self.env[node[1]]
             return dic[node[2][1]]
@@ -274,7 +272,7 @@ class HisuiInterpreter:
             lst = self.env[node[1]].values()
             return print(lst)
 
-        # Vector operations ======================================================================================
+        # Vector operations ==========================================================================================
         if node[0] == 'xcomp':
             xcomp = self.env[node[1]].x
             return xcomp
@@ -301,7 +299,7 @@ class HisuiInterpreter:
             v2 = self.env[node[2]]
             return v.cross(v2)
 
-        # Shape operations ======================================================================================
+        # Shape operations ===========================================================================================
         if node[0] == 'area':
             shape = self.env[node[1]]
             return shape.area()
@@ -330,7 +328,7 @@ class HisuiInterpreter:
             shape = self.env[node[1]]
             return shape.findOpposite()
 
-        # Matrix operations ======================================================================================
+        # Matrix operations ==========================================================================================
         if node[0] == 'printMatrix':
             m = self.env[node[1]]
             return m.printMatrix()

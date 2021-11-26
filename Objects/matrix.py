@@ -39,10 +39,10 @@ class matrix:
 
         self.printMatrix()
 
-    def powMatrix(self, pow):
+    def powMatrix(self, power):
         for i in range(0, len(self.matrix)):
             for j in range(0, len(self.matrix[i])):
-                self.matrix[i][j] = self.matrix[i][j] ** pow
+                self.matrix[i][j] = self.matrix[i][j] ** power
 
         self.printMatrix()
 
@@ -50,12 +50,12 @@ class matrix:
         row1 = self.matrix[0]
         row2 = self.matrix[1]
         row3 = self.matrix[2]
-        determinantR = (row1[0]*row2[1]*row3[2])+(row1[1]*row2[2]*row3[0])+(row1[2]*row2[0]*row3[1])
-        determinantL = (row3[0]*row2[1]*row1[2])+(row3[1]*row2[2]*row1[0])+(row3[2]*row2[0]*row1[1])
+        determinantR = (row1[0] * row2[1] * row3[2]) + (row1[1] * row2[2] * row3[0]) + (row1[2] * row2[0] * row3[1])
+        determinantL = (row3[0] * row2[1] * row1[2]) + (row3[1] * row2[2] * row1[0]) + (row3[2] * row2[0] * row1[1])
 
-        determinant = determinantR-determinantL
+        determinant = determinantR - determinantL
         return determinant
 
     def identity(self):
-        lst = [[1,0,0],[0,1,0],[0,0,1]]
+        lst = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
         return lst

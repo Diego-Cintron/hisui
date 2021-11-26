@@ -6,11 +6,13 @@ from Objects.SHAPES2D.triangle import triangle
 from Objects.matrix import matrix
 from HisuiClasses.HisuiLexer import HisuiLexer
 from sly import Parser
+
+
 # Sly required, to install sly type: pip3 install sly on the terminal.
 
 # For Language syntax,methods and creation please read "Documentation.txt"
 
-# Hisui Parser takes in the tokens from the lexer and then formats them according to the specific determined grammer.
+# Hisui Parser takes in the tokens from the lexer and then formats them according to the specific determined grammar.
 class HisuiParser(Parser):
     tokens = HisuiLexer.tokens
 
@@ -29,7 +31,7 @@ class HisuiParser(Parser):
     def statement(self, p):
         pass
 
-    # Variable Declaration =============================================================================================
+    # Variable Declaration ===========================================================================================
 
     # Assigns value to a variable
     @_('var_assign')
@@ -51,7 +53,7 @@ class HisuiParser(Parser):
     def statement(self, p):
         return p.expr
 
-    # Expression Handling ==============================================================================================
+    # Expression Handling ============================================================================================
 
     # Does addition
     @_('expr "+" expr')
@@ -103,7 +105,7 @@ class HisuiParser(Parser):
     def expr(self, p):
         return 'id', p.ID
 
-    # Condition Handling ===============================================================================================
+    # Condition Handling =============================================================================================
 
     # Parses the EQUAL token
     @_('expr EQUAL expr')
@@ -130,7 +132,7 @@ class HisuiParser(Parser):
     def condition(self, p):
         return 'less', p.expr0, p.expr1
 
-    # Function Declaration and Calling =================================================================================
+    # Function Declaration and Calling ===============================================================================
     @_('FUNCTION ID "(" ")" COLON statement')
     def statement(self, p):
         return 'function_def', p.ID, p.statement
@@ -139,7 +141,7 @@ class HisuiParser(Parser):
     def statement(self, p):
         return 'function_call', p.ID
 
-    # If-statements ====================================================================================================
+    # If-statements ==================================================================================================
 
     @_('IF condition THEN statement ELSE statement')
     def statement(self, p):
@@ -149,7 +151,7 @@ class HisuiParser(Parser):
     def statement(self, p):
         return 'if_stmt', p.condition, ('branch', p.expr0, p.expr1)
 
-    # Loops ============================================================================================================
+    # Loops ==========================================================================================================
 
     # While loop
     @_('WHILE condition THEN statement')
@@ -161,7 +163,7 @@ class HisuiParser(Parser):
     def statement(self, p):
         return 'for_loop', ('for_loop_setup', p.var_assign, p.expr), p.statement
 
-    # Lists ============================================================================================================
+    # Lists ==========================================================================================================
 
     @_('ID "=" LIST "[" [ expr ] { COMMA expr } "]" ')
     def var_assign(self, p):
@@ -224,7 +226,7 @@ class HisuiParser(Parser):
         except TypeError:
             print("Error variable is not a list")
 
-    # Vectors =====================================================================================================
+    # Vectors =======================================================================================================
     @_('ID "=" VECTOR "(" expr COMMA expr [ COMMA expr ] ")" ')
     def var_assign(self, p):
         if p.expr2 is None:
@@ -261,7 +263,7 @@ class HisuiParser(Parser):
     def expr(self, p):
         return 'components', p.ID
 
-    # Dictionaries ==================================
+    # Dictionaries ===================================================================================================
     @_('ID "=" DICTIONARY "{"  expr COLON expr  { COMMA expr COLON expr } "}" ')
     def var_assign(self, p):
         dic = {p.expr0[1]: p.expr1[1]}
@@ -292,7 +294,7 @@ class HisuiParser(Parser):
         except TypeError:
             print("Error variable is not a dictionary")
 
-    # Shapes =================================================
+    # Shapes =========================================================================================================
     @_('ID "=" RECTANGLE "(" expr COMMA expr ")" ')
     def var_assign(self, p):
         rect = rectangle(p.expr0[1], p.expr1[1])
@@ -341,7 +343,7 @@ class HisuiParser(Parser):
     def expr(self, p):
         return 'hypotenuse', p.ID
 
-    # Matrix ==================================================================================
+    # Matrix =========================================================================================================
     @_('ID "=" MATRIX "(" "[" expr { COMMA expr } "]" COMMA "[" expr { COMMA expr } "]" COMMA "[" expr { COMMA expr } '
        '"]" ")"')
     def var_assign(self, p):
@@ -377,15 +379,15 @@ class HisuiParser(Parser):
 
     @_('ID "." MSUB "(" ID ")" ')
     def expr(self, p):
-        return 'mSUB', p.ID0,p.ID1
+        return 'mSUB', p.ID0, p.ID1
 
     @_('ID "." MMULT "(" ID ")" ')
     def expr(self, p):
-        return 'mMult', p.ID0,p.ID1
+        return 'mMult', p.ID0, p.ID1
 
     @_('ID "." MDIV "(" ID ")" ')
     def expr(self, p):
-        return 'mDiv', p.ID0,p.ID1
+        return 'mDiv', p.ID0, p.ID1
 
     @_('ID "." MPOW "(" expr ")" ')
     def expr(self, p):
@@ -394,4 +396,3 @@ class HisuiParser(Parser):
     @_('ID "." DETERMINANT "("  ")" ')
     def expr(self, p):
         return 'determinant', p.ID
-

@@ -4,7 +4,7 @@ class vector:
         self.y = y
         self.z = z
 
-    def cross(self,v2):
+    def cross(self, v2):
         x = self.x
         y = self.y
         z = self.z
@@ -12,10 +12,10 @@ class vector:
         y2 = v2.y
         z2 = v2.z
 
-        newx = (y*z2-z*y2)
-        newy = (z*x2-x*z2)
-        newz = (x*y2-y*x2)
-        return vector(newx,newy,newz)
+        newX = (y * z2 - z * y2)
+        newY = (z * x2 - x * z2)
+        newZ = (x * y2 - y * x2)
+        return vector(newX, newY, newZ)
 
     def dot(self, v2):
         x = self.x

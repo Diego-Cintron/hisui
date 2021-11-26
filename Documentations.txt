@@ -33,10 +33,10 @@ parameter1 < parameter2         ----> returns true if the value of parameter1 is
 parameter1 > parameter2         ----> returns true if the value of parameter1 is greater than the value of parameter2
 
 parameter1 <= parameter2        ----> returns true if the value of parameter1 is less than or equal to the value of
-                                      parameter2.
+                                      parameter2
 
 parameter1 >= parameter2        ----> returns true if the value of parameter1 is greater than or equal to the value
-                                      of parameter2.
+                                      of parameter2
 
 parameter1 == parameter2        ----> returns true if the value of parameter1 is equal to the value of parameter2
 
@@ -49,16 +49,16 @@ foo()                           ----> calls the function foo and runs the statem
 
 If statements ========================================================
 if condition then statement1 else statement2 ----> checks the boolean value of the condition given; if true, runs the
-                                                   statement1. Otherwise runs the statement2.
+                                                   statement1. Otherwise runs the statement2
 
 Loops ===============================================================
 while condition then statement  ----> checks the boolean value of the condition given; if true, repeatedly runs
-                                      the statement given until the condition is false.
+                                      the statement given until the condition is false
 
 for variable = {i} to {j} then statement ----> Assigns number given to the variable given. If the value of the variable
                                                is less than the value of the given j, then runs the statement and
                                                increases the value of the variable by 1. This repeats until the value
-                                               of the variable is equal to or larger than the given j.
+                                               of the variable is equal to or larger than the given j
 
 Lists ===================================================
 variable = list[]               ----> creates an empty list
@@ -83,11 +83,8 @@ variable = square(s)            ----> creates a square of sides s
 
 variable = rectangle(l,w)       ----> creates a rectangle of length l and width w
 
-variable = triangle(o,a,h,)    ----> creates a triangle with either sides of opposite (o) , adjacent (a) and hypotenuse
-                                      (h) with an optional parameter for the angle theta (t).
-
-variable = triangle(o (or) h (or) a,t) ----> creates a triangle with one of the sides, opposite (o) , adjacent (a) or
-                                       hypotenuse (h), and an angle theta (t).
+variable = triangle(o,a,h,t)    ----> creates a triangle with either sides of opposite (o) , adjacent (a) and hypotenuse
+                                     (h) or the angle theta (t). Enter 0 for unknown parameters.
 
 variable.opposite()             ----> returns the calculated opposite side, using either the adjacent or hypotenuse side
                                       and the angle theta (for triangle objects only)
@@ -104,14 +101,14 @@ variable.area()                 ----> returns the area of the shape
 
 variable.circle(r)              ----> creates a circle of radius r
 
-variable.diameter()             ----> returns the diameter (circle only)
+variable.diameter()             ----> returns the diameter (for circle objects only)
 
-variable.circumference()        ----> returns the circumference (circles only)
+variable.circumference()        ----> returns the circumference (for circle objects only)
 
 
 Vectors =====================================================================
 
-variable = vector(x,y,z)        ----> creates a vector of x, y and optional z components.
+variable = vector(x,y,z)        ----> creates a vector of x, y and optional z components
 
 variable.dot( vector )          ----> returns the dot product of two vectors
 
@@ -127,30 +124,30 @@ variable.zc()                   ----> returns the z component of a vector
 Matrix ======================================================================
 
 variable = matrix([a,b,c],[d,e,f],[g,h,i]) --> creates a 3x3 matrix with the given elements, currently only 3x3 matrix
-                                               are supported.
+                                               are supported
 
 variable.printMatrix()          ----> prints the matrix
 
-variable.mAdd(matrix2)          ---> adds all the elements of matrix B to matrix A
+variable.mAdd(matrix2)          ----> adds all the elements of matrix B to matrix A
 
-variable.mSub(matrix2)          ---> subtracts all the elements of matrix B to matrix A
+variable.mSub(matrix2)          ----> subtracts all the elements of matrix B to matrix A
 
-variable.mMult(matrix2)          ---> multiplies all the elements of matrix B to matrix A
+variable.mMult(matrix2)         ----> multiplies all the elements of matrix B to matrix A
 
-variable.mDiv(matrix2)          ---> divides all the elements of matrix B to matrix A
+variable.mDiv(matrix2)          ----> divides all the elements of matrix B to matrix A
 
-variable.mPow(exponent)         ---> raises all elements of a matrix to the given exponent
+variable.mPow(exponent)         ----> raises all elements of a matrix to the given exponent
 
-variable.determinant()          ---> returns the determinant of the matrix
+variable.determinant()          ----> returns the determinant of the matrix
 
 
 Dictionaries ================================================================
 
 variable = dictionary{key;value,key2;value2.........kn;vn} -> creates a dictionary with n number of keys and values
 
-variable.get(key)                                 ---> returns value corresponding to the specified key
+variable.get(key)               ----> returns value corresponding to the specified key
 
-variable.getKeys()                                ---> returns a list of all keys in the dictionary.
+variable.getKeys()              ----> returns a list of all keys in the dictionary
 
-variable.getValues()                              ---> returns a list of all values in the dictionary.
+variable.getValues()            ----> returns a list of all values in the dictionary
 

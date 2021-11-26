@@ -1,12 +1,13 @@
 from sly import Lexer
+
+
 # Sly required, to install sly type: pip3 install sly on the terminal.
 
 # For Language syntax,methods and creation please read "Documentation.txt"
 
-# Hisui Lexer Class, This class takes the input from the user and then divides it into tokens for the parser to then
-# use.
+# Hisui Lexer Class, This class takes the input from the user and then
+# divides it into tokens for the parser to the use.
 class HisuiLexer(Lexer):
-
     # Parser Token List.
     tokens = {ID, NUMBER, STRING, EQUAL, COLON,
               # statement tokens
@@ -88,7 +89,7 @@ class HisuiLexer(Lexer):
     ID['zc'] = ZCOMP
     ID['magnitude'] = MAGNITUDE
 
-    #Dictionary token remap
+    # Dictionary token remap
     ID['dictionary'] = DICTIONARY
     ID['get'] = GET
     ID['gValues'] = GVALUES
