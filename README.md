@@ -13,5 +13,5 @@ To view the syntax, all available method and current supported objects, please v
 Hisui Created by:
 Nathaniel E Mendez
 Diego A Cintron
-Christian A Rosado
+Christian A Rivera
 
