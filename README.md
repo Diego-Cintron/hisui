@@ -11,7 +11,7 @@ pip3 install sly
 To view the syntax, all available method and current supported objects, please view "Documentation.txt"
 
 Hisui Created by:
-Nathaniel E Mendez
-Diego A Cintron
+Nathaniel E Mendez,
+Diego A Cintron,
 Christian O Rivera
 
